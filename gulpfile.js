@@ -4,7 +4,6 @@ const gutil = require("gulp-util");
 const webpack = require("webpack");
 const WebpackDevServer = require("webpack-dev-server");
 
-
 gulp.task('copy', function () {
     gulp.src([
       './src/index.html',
