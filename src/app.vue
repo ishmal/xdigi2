@@ -1,16 +1,20 @@
 <template>
 <div>
 <h2 class='example'>Main : {{ msg }}</h2>
-<tuner></tuner>
+<tuner :digi='digi'></tuner>
 </div>
 </template>
 
 <script>
+
+import {Digi} from './lib/digi'
+
 export default {
-  data () {
+  let digi = new Digi();
+  data: function () {
     return {
-      msg: 'Hello world!'
-    }
+      digi: this.digi
+    };
   }
 }
 </script>
