@@ -462,7 +462,7 @@ export class TunerImpl implements Tuner {
 
     updateData(data: number[]) {
         this.drawWaterfall2(data);
-        this.drawSpectrum(data);
+        //this.drawSpectrum(data);
         this.drawTuner();
         this.drawScope();
     }

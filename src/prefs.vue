@@ -35,7 +35,7 @@ export default {
 
 <style>
 
-.outtext {
+.prefs {
   background: #ffaaaa;
 }
 

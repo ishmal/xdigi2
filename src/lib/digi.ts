@@ -288,7 +288,7 @@ export class Digi {
     }
 
     onOffToggle() {
-      if (this.isRunning) {
+      if (this._isRunning) {
         this.stop();
       } else {
         this.start();
@@ -296,9 +296,9 @@ export class Digi {
     }
 
     start(): void {
-			this._audioInput.open();
-			this._audioOutput.open();
-      this._isRunning = true;
+		this._audioInput.open();
+		this._audioOutput.open();
+        this._isRunning = true;
     }
 
     stop(): void {

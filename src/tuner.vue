@@ -1,5 +1,5 @@
 <template>
-  <canvas width='600' height='200'></canvas>
+  <canvas class='tuner' width='1024' height='150'></canvas>
 </template>
 
 <script>
@@ -18,5 +18,7 @@ export default {
 </script>
 
 <style>
-
+.tuner {
+  height: 25%;
+}
 </style>

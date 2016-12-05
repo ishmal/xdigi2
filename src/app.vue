@@ -1,8 +1,8 @@
 <template>
 
-<div>
+<div class='app'>
 
-  <nav class="row navbar navbar-light bg-faded">
+  <nav class="appnav row navbar navbar-light bg-faded">
 
     <a class="navbar-brand"
      v-on:click='page="home"' href="#">Xdigi</a>
@@ -132,6 +132,14 @@ export default {
 </script>
 
 <style>
+
+  .app {
+    height: 100%;
+  }
+
+  .appnav {
+    height: 10%;
+  }
 
   .running {
       color: red

@@ -1,5 +1,5 @@
 <template>
-  <textarea class='terminal' rows='10'></textarea>
+  <textarea class='terminal' rows='4'></textarea>
 </template>
 
 <script>
@@ -20,5 +20,6 @@ export default {
 <style>
 .terminal {
   background: #aaffaa;
+  height: 25%;
 }
 </style>

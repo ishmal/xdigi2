@@ -1,5 +1,5 @@
 <template>
-  <textarea class='status' rows='10'></textarea>
+  <textarea class='status' rows='3'></textarea>
 </template>
 
 <script>
@@ -21,6 +21,7 @@ export default {
 
 .status {
   background: #aaaaaa;
+  height: 10%;
 }
 
 </style>

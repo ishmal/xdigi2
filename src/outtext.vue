@@ -1,5 +1,5 @@
 <template>
-  <textarea class='outtext' rows='10'></textarea>
+  <textarea class='outtext' rows='5'></textarea>
 </template>
 
 <script>
@@ -20,7 +20,8 @@ export default {
 <style>
 
 .outtext {
-  background: #ffaaaa;
+  background: #aaaaff;
+  height: 30%;
 }
 
 </style>
