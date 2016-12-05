@@ -3,7 +3,7 @@ const webpack = require("webpack");
 module.exports = {
 	entry: {
 		app: './src/app.ts',
-		vendor: ['vue', 'bootstrap', 'jquery']
+		vendor: ['vue', 'bootstrap', 'tether', 'jquery']
 	},
 	output: {
 		filename: 'app.bundle.js',
@@ -38,6 +38,7 @@ module.exports = {
 		new webpack.optimize.CommonsChunkPlugin( /* chunkName= */ "vendor", /* filename= */
 			"vendor.bundle.js"),
 		new webpack.ProvidePlugin({
+      "window.Tether": 'tether',
 			$: "jquery",
 			jQuery: "jquery",
 			"window.jQuery": "jquery"

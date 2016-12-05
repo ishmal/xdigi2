@@ -56,6 +56,7 @@ export interface Terminal {
  */
 export class Digi {
 
+    _isRunning: boolean;
     _audioInput: AudioInput;
     _audioOutput: AudioOutput;
     _watcher: Watcher;
@@ -73,6 +74,7 @@ export class Digi {
 
 
     constructor(canvas?: HTMLCanvasElement) {
+        this._isRunning = false;
         this._audioInput = AudioFactory.getInput(this);
         this._audioOutput = AudioFactory.getOutput(this);
         this._watcher = new Watcher(this);
@@ -199,6 +201,10 @@ export class Digi {
         }
     }
 
+    txModeToggle() {
+      this.txMode = !this.txMode;
+    }
+
     get tuner(): Tuner {
         return this._tuner;
     }
@@ -258,15 +264,28 @@ export class Digi {
         return this._mode.getTransmitData();
     }
 
+    get isRunning(): boolean {
+      return this._isRunning;
+    }
+
+    onOffToggle() {
+      if (this.isRunning) {
+        this.stop();
+      } else {
+        this.start();
+      }
+    }
 
     start(): void {
 			this._audioInput.open();
 			this._audioOutput.open();
+      this._isRunning = true;
     }
 
     stop(): void {
         this._audioInput.close();
         this._audioOutput.close();
+        this._isRunning = false;
     }
 
 

@@ -3,4 +3,4 @@ www
 
 src/**/*.d.ts
 src/**/*.map
-
+src/**/*.js

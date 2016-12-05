@@ -301,6 +301,7 @@ export class PskMode extends Mode {
         // transmit
         this._txBuf = [];
         this._txPtr = 0;
+        this._txQueue = [];
 
         this.rate = 31.25;
 
@@ -497,8 +498,8 @@ export class PskMode extends Mode {
     }
 
     setupTransmit() {
-      let sps = this.samplesPerSymbol;
-      let txPhase = new Array[4];
+      let sps = Math.floor(this.samplesPerSymbol);
+      let txPhase = new Array(4);
       for (let i = 0 ; i < 4 ; i++) {
         txPhase[i] = new Array(sps);
       }

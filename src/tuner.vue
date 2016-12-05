@@ -4,19 +4,19 @@
 
 <script>
 
+import {TunerImpl} from './lib/tuner';
+
 export default {
   props: ['digi'],
   mounted: function() {
-    let elem = this.el;
-    let tuner = new TunerImpl(digi, elem);
-    digi.tuner = tuner;
+    let elem = this.$el;
+    let tuner = new TunerImpl(this.digi, elem);
+    this.digi.tuner = tuner;
   }
 }
 
 </script>
 
-</style>
-
-
+<style>
 
 </style>

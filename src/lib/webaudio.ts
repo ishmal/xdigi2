@@ -435,15 +435,6 @@ export class WebAudioOutput extends AudioOutput {
         lpf.Q.value = 20;
         this.source.connect(lpf);
 
-
-				let lpf2 = this.actx.createBiquadFilter();
-        lpf2.type = "lowpass";
-        lpf2.frequency.value = 3000.0;
-        lpf2.gain.value = 5;
-        lpf2.Q.value = 20;
-        lpf.connect(lpf2);
-        lpf2.connect(this.actx.destination);
-
         this.isRunning = false;  //by default
         return true;
     }
