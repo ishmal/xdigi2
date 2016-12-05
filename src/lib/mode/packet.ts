@@ -371,10 +371,10 @@ class PacketMode extends FskBase {
         this._bufPtr = 0;
         this._rxbuf = new Array(RXLEN);
         this._lastBit = false;
+    }
 
-        let that = this;
-
-        this._properties = {
+    getProperties():Properties {
+        return {
             name: 'packet',
             description: 'asynchromous 8-bit packet mode',
             tooltip: 'AX.25 and APRS',
@@ -384,10 +384,10 @@ class PacketMode extends FskBase {
                     type: 'choice',
                     tooltip: 'packet data rate',
                     get value(): number {
-                        return that.rate;
+                        return this.rate;
                     },
                     set value(v: number) {
-                        that.rate = v;
+                        this.rate = v;
                     },
                     options: [
                         { name: '300', value: 300.0 },
@@ -399,10 +399,10 @@ class PacketMode extends FskBase {
                     type: 'choice',
                     tooltip: 'frequency distance between mark and space',
                     get value(): number {
-                        return that.shift;
+                        return this.shift;
                     },
                     set value(v: number) {
-                        that.shift = v;
+                        this.shift = v;
                     },
                     options: [
                         { name: '200', value: 200.0 },

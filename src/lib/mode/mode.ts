@@ -64,15 +64,6 @@ export class Mode {
     _iptr: number;
     _cwBuffer: number[];
 
-    /**
-     * We must set this property once at construction, and always
-     * return the same object in the getter, in order to avoid
-     * this issue in Angukar2:
-     * https:// github.com/angular/angular/issues/5950
-     */
-    _properties: Properties;
-
-
 
     constructor(par: Digi) {
         this.par = par;
@@ -88,19 +79,18 @@ export class Mode {
         this._txNco = NcoCreateSimple(this._frequency, par.sampleRate);
         this._cwBuffer = new Array(1024)
         this._cwBuffer.fill(1.0);
-        this._properties = {
-            name: 'mode',
-            description: 'Base mode class.  Please override this method',
-            tooltip: 'Base mode class.  Please override this method',
-            controls: []
-        };
     }
 
     /**
      * Override this
      */
-    get properties(): Properties {
-        return this._properties;
+    getProperties(): Properties {
+        return {
+            name: 'mode',
+            description: 'Base mode class.  Please override this method',
+            tooltip: 'Base mode class.  Please override this method',
+            controls: []
+        };
     }
 
     set frequency(freq: number) {
@@ -154,7 +144,7 @@ export class Mode {
     }
 
     status(msg) {
-        this.par.status(this.properties.name + ' : ' + msg);
+        this.par.status(this.getProperties().name + ' : ' + msg);
     }
 
     /**

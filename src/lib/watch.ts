@@ -90,7 +90,7 @@ class Watcher {
         let rgx = new RegExp(this.spot, 'ig');
         for (let res = rgx.exec(str); res !== null; res = rgx.exec(str)) {
             let mode = this.par.mode;
-            let name = mode.properties.name;
+            let name = mode.getProperties().name;
             let rate = mode.rate;
             let call = {
                 call: res[1].toLowerCase(),

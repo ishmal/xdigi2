@@ -1,18 +1,21 @@
 const gulp = require('gulp');
 const del = require('del');
-const mkdirp = require('mkdirp');
+const replace = require('gulp-replace');
 const gutil = require("gulp-util");
 const webpack = require("webpack");
 const WebpackDevServer = require("webpack-dev-server");
 
-gulp.task('copy', function () {    gulp.src([
+gulp.task('copy', function () {
+    gulp.src([
       './src/index.html',
       './node_modules/bootstrap/dist/css/bootstrap.min.css',
-      './node_modules/octicons/build/octicons.min.css'
     ]).pipe(gulp.dest('./www/'));
     gulp.src([
-      './node_modules/octicons/**/*'
-    ]).pipe(gulp.dest('./www/octicons'));
+      './node_modules/font-awesome/fonts/**/*'
+    ]).pipe(gulp.dest('./www/fonts'));
+    gulp.src([
+      './node_modules/font-awesome/css/font-awesome.min.css'
+    ]).pipe(replace('../fonts', 'fonts')).pipe(gulp.dest('./www'));
 });
 
 gulp.task('clean', function(done) {

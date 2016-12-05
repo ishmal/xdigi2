@@ -305,9 +305,10 @@ export class PskMode extends Mode {
 
         this.rate = 31.25;
 
-        let that = this;
+    }
 
-        this._properties = {
+     getProperties(): Properties {
+            return {
             name: 'psk',
             description: 'phase-shift keying mode',
             tooltip: 'phase shift keying',
@@ -316,10 +317,10 @@ export class PskMode extends Mode {
                     name: 'rate',
                     type: 'choice',
                     get value(): number {
-                        return that.rate;
+                        return this.rate;
                     },
                     set value(v: number) {
-                        that.rate = v;
+                        this.rate = v;
                     },
                     options: [
                         { name: '31', value: 31.25 },
@@ -331,10 +332,10 @@ export class PskMode extends Mode {
                     name: 'qpsk',
                     type: 'boolean',
                     get value(): boolean {
-                        return that._qpskMode;
+                        return this._qpskMode;
                     },
                     set value(v: boolean) {
-                        that._qpskMode = v;
+                        this._qpskMode = v;
                     }
                 }
             ]

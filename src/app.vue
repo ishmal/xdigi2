@@ -4,23 +4,52 @@
 
   <nav class="row navbar navbar-light bg-faded">
 
-    <a class="col-xs-3 navbar-brand octicon octicon.radio-tower"
-     :class='{"txon" : digi.isRunning, "txoff": !digi.isRunning }'
-     v-on:click='digi.onOffToggle()' href="#">Xdigi</a>
+    <a class="navbar-brand"
+     v-on:click='page="home"' href="#">Xdigi</a>
 
-    <select class='col-xs-3' v-model='digi.mode'>
-        <option v-for="m in digi.modes" :value="m">{{ m._properties.name }}</option>
-    </select>
+    <ul class='nav navbar-nav'>
 
-    <button class='col-xs-3 octicon octicon.broadcast'
-      :class='{"txon" : digi.txMode, "txoff": !digi.txMode }'
-      v-on:click='digi.txModeToggle()'></button>
+    <li class='nav-item dropdown'>
+      <select class='dropdown-toggle' v-model='digi.mode'>
+        <option v-for="m in digi.modes" :value="m">{{ m.getProperties().name }}</option>
+      </select>
+    </li>
+
+    <li class='nav-item'>
+      <a class="nav-link fa fa-wrench" v-on:click='page="settings"' href="#"></a>
+    </li>
+
+    <li class='nav-item'>
+      <a class="nav-link fa fa-pencil-square-o" v-on:click='page="prefs"' href="#"></a>
+    </li>
+
+    <li class='nav-item'>
+      <a class="nav-link fa" :class='runningClass'
+        v-on:click='digi.onOffToggle()' href="#"></a>
+    </li>
+
+    <li class='nav-item'>
+      <a class='nav-link fa' :class='txClass'
+        v-on:click='digi.txModeToggle()'></a>
+    </li>
+
+  </ul>
 
   </nav>
 
-  <tuner class='col-xs-12' :digi='digi'></tuner>
-  <outtext class='col-xs-12' :digi='digi'></outtext>
-  <terminal class='col-xs-12' :digi='digi'></terminal>
+  <div v-if="page === 'settings'">
+    <settings class='col-xs-12' :digi='digi'></settings>
+  </div>
+  <div v-else-if="page === 'prefs'">
+    <prefs class='col-xs-12' :digi='digi' :config='config'></prefs>
+  </div>
+  <div v-else>
+    <tuner class='col-xs-12' :digi='digi'></tuner>
+    <status class='col-xs-12' :digi='digi'></status>
+    <outtext class='col-xs-12' :digi='digi'></outtext>
+    <terminal class='col-xs-12' :digi='digi'></terminal>
+  </div>
+
 </div>
 
 </template>
@@ -29,33 +58,93 @@
 
 import {Digi} from './lib/digi';
 declare var require: any;
-var tuner = require('./tuner.vue').default;
-var outtext = require('./outtext.vue').default;
-var terminal = require('./terminal.vue').default;
+const tuner = require('./tuner.vue').default;
+const status = require('./status.vue').default;
+const outtext = require('./outtext.vue').default;
+const terminal = require('./terminal.vue').default;
+const settings = require('./settings.vue').default;
+const prefs = require('./prefs.vue').default;
 
 const digi = new Digi();
+
+function newConfig() {
+  return {
+    msg0: "",
+    msg1: "",
+    msg2: ""
+  };
+}
+let config = newConfig();
+
+let page = "home";
 
 export default {
   components: {
     tuner,
+    status,
     outtext,
-    terminal
+    terminal,
+    settings,
+    prefs
   },
+
   data() {
     return {
-      digi: digi
+      digi: digi,
+      config: config,
+      page: page
     };
+  },
+
+  created: function() {
+    let str = localStorage.getItem('xdigi');
+    if (!str) {
+      Object.assign(config, newConfig());
+    } else {
+      Object.assign(config, JSON.parse(str));
+    }
+  },
+
+  computed: {
+    runningClass: function() {
+      let isOn = digi.isRunning;
+      return {
+        "running" : isOn, 
+        "fa-microphone": isOn, 
+        "not-running": !isOn,
+        "fa-microphone-slash": !isOn
+      }
+    },
+    txClass: function() {
+      let isOn = digi.txMode;
+      return {
+        "txon" : isOn, 
+        "fa-volume-up": isOn, 
+        "txoff": !isOn, 
+        "fa-volume-off":!isOn, 
+      }
+    }
   }
+
+
 }
+
 </script>
 
 <style>
 
-  .txon {
+  .running {
       color: red
   }
-  .txoff {
+  .not-running {
     color: green
+  }
+
+  .txon {
+      color: red;
+  }
+  .txoff {
+    color: green;
   }
 
 </style>

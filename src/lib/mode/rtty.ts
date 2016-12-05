@@ -128,10 +128,10 @@ class RttyMode extends FskBase {
         this._counter = 0;
         this._msbit = 1 << (NRBITS - 1);
         this._shifted = false;
+    }
 
-        let that = this;
-
-        this._properties = {
+    getProperties(): Properties {
+        return {
             name: 'rtty',
             description: 'Asynchronous 5-bit radio-teletype mode',
             tooltip: 'radio teletype',
@@ -141,10 +141,10 @@ class RttyMode extends FskBase {
                     type: 'choice',
                     tooltip: 'rtty baud rate',
                     get value(): number {
-                        return that.rate;
+                        return this.rate;
                     },
                     set value(v: number) {
-                        that.rate = v;
+                        this.rate = v;
                     },
                     options: [
                         { name: '45', value: 45.45 },
@@ -158,10 +158,10 @@ class RttyMode extends FskBase {
                     type: 'choice',
                     tooltip: 'frequency distance between mark and space',
                     get value(): number {
-                        return that.shift;
+                        return this.shift;
                     },
                     set value(v: number) {
-                        that.shift = v;
+                        this.shift = v;
                     },
                     options: [
                         { name: '85', value: 85.0 },
@@ -174,20 +174,20 @@ class RttyMode extends FskBase {
                     name: 'inv',
                     type: 'boolean',
                     get value() {
-                        return that.inverted;
+                        return this.inverted;
                     },
                     set value(v) {
-                        that.inverted = v;
+                        this.inverted = v;
                     }
                 },
                 {
                     name: 'UoS',
                     type: 'boolean',
                     get value() {
-                        return that._unshiftOnSpace;
+                        return this._unshiftOnSpace;
                     },
                     set value(v) {
-                        that._unshiftOnSpace = v;
+                        this._unshiftOnSpace = v;
                     }
                 }
             ]

@@ -187,9 +187,10 @@ export class NavtexMode extends FskBase {
 
         this._lastChar = '@';
 
-        let that = this;
+    }
 
-        this._properties = {
+    getProperties(): Properties {
+        return {
             name: 'navtex',
             description: '7-bit Navtex marine mode',
             tooltip: 'international naval teleprinter',
@@ -198,20 +199,20 @@ export class NavtexMode extends FskBase {
                     name: 'inv',
                     type: 'boolean',
                     get value(): boolean {
-                        return that.inverted;
+                        return this.inverted;
                     },
                     set value(v: boolean) {
-                        that.inverted = v;
+                        this.inverted = v;
                     }
                 },
                 {
                     name: 'UoS',
                     type: 'boolean',
                     get value(): boolean {
-                        return that._unshiftOnSpace;
+                        return this._unshiftOnSpace;
                     },
                     set value(v: boolean) {
-                        that._unshiftOnSpace = v;
+                        this._unshiftOnSpace = v;
                     }
                 }
             ]
