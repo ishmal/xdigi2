@@ -33,21 +33,40 @@ import {Tuner, TunerImpl, TunerDummy} from './tuner';
 /**
  * Interface for a text output widget, which the UI should overload
  */
-export interface OutText {
-    clear(): void;
+export class OutText {
 
-    putText(str: string): void;
+    constructor(par: Digi, elem: HTMLElement) {
+
+    }
+
+    clear(): void {
+
+    }
+
+    putText(str: string): void {
+
+    }
 }
 
 /**
  * Interface for a text input/output widget, which the UI should overload
  */
-export interface Terminal {
-    clear(): void;
+export class Terminal {
+    constructor(par: Digi, elem: HTMLElement) {
 
-    getText(): string;
+    }
 
-    putText(str: string): void;
+    clear(): void {
+
+    }
+
+    putText(str: string): void {
+
+    }
+    getText(): string {
+        return '';
+    }
+
 }
 
 

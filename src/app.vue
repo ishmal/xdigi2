@@ -19,6 +19,8 @@
   </nav>
 
   <tuner class='col-xs-12' :digi='digi'></tuner>
+  <outtext class='col-xs-12' :digi='digi'></outtext>
+  <terminal class='col-xs-12' :digi='digi'></terminal>
 </div>
 
 </template>
@@ -28,12 +30,16 @@
 import {Digi} from './lib/digi';
 declare var require: any;
 var tuner = require('./tuner.vue').default;
+var outtext = require('./outtext.vue').default;
+var terminal = require('./terminal.vue').default;
 
 const digi = new Digi();
 
 export default {
   components: {
-    tuner
+    tuner,
+    outtext,
+    terminal
   },
   data() {
     return {
