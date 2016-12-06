@@ -389,10 +389,10 @@ class PacketMode extends FskBase {
                     set value(v: number) {
                         this.rate = v;
                     },
-                    options: [
-                        { name: '300', value: 300.0 },
-                        { name: '1200', value: 1200.0 }
-                    ]
+                    options: {
+                        '300': 300.0,
+                        '1200': 1200.0
+                    }
                 },
                 {
                     name: 'shift',
@@ -404,10 +404,10 @@ class PacketMode extends FskBase {
                     set value(v: number) {
                         this.shift = v;
                     },
-                    options: [
-                        { name: '200', value: 200.0 },
-                        { name: '1000', value: 1000.0 }
-                    ]
+                    options: {
+                        '200': 200.0,
+                        '1000': 1000.0
+                    }
                 }
             ]
         };

@@ -146,12 +146,12 @@ class RttyMode extends FskBase {
                     set value(v: number) {
                         this.rate = v;
                     },
-                    options: [
-                        { name: '45', value: 45.45 },
-                        { name: '50', value: 50.00 },
-                        { name: '75', value: 75.00 },
-                        { name: '100', value: 100.00 }
-                    ]
+                    options: {
+                        '45': 45.45,
+                        '50': 50.00,
+                        '75': 75.00,
+                        '100': 100.00
+                    }
                 },
                 {
                     name: 'shift',
@@ -163,12 +163,12 @@ class RttyMode extends FskBase {
                     set value(v: number) {
                         this.shift = v;
                     },
-                    options: [
-                        { name: '85', value: 85.0 },
-                        { name: '170', value: 170.0 },
-                        { name: '450', value: 450.0 },
-                        { name: '850', value: 850.0 }
-                    ]
+                    options: {
+                        '85': 85.0,
+                        '170': 170.0,
+                        '450': 450.0,
+                        '850': 850.0
+                    }
                 },
                 {
                     name: 'inv',

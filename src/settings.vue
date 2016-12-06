@@ -11,7 +11,7 @@
     <span class='col-xs-2'>{{ c.name }}</span>
     <div class='col-xs-6' v-if='c.type==="choice"'>
       <select v-model='c.value'>
-        <option v-for='o in c.options' :value='o.value'>{{ o.name }}</option>
+        <option v-for='(v, k) in c.options' :value='v'>{{ k }}</option>
       </select>
     </div>
     <div class='col-xs-6' v-else-if='c.type==="boolean"'>

@@ -308,7 +308,7 @@ export class PskMode extends Mode {
     }
 
      getProperties(): Properties {
-            return {
+         let cfg = {
             name: 'psk',
             description: 'phase-shift keying mode',
             tooltip: 'phase shift keying',
@@ -322,11 +322,11 @@ export class PskMode extends Mode {
                     set value(v: number) {
                         this.rate = v;
                     },
-                    options: [
-                        { name: '31', value: 31.25 },
-                        { name: '63', value: 62.50 },
-                        { name: '125', value: 125.00 }
-                    ]
+                    options: {
+                        '31': 31.25,
+                        '63': 62.50,
+                        '125': 125.00
+                    }
                 },
                 {
                     name: 'qpsk',
@@ -340,6 +340,7 @@ export class PskMode extends Mode {
                 }
             ]
         };
+        return cfg;
     }
 
     get bandwidth() {

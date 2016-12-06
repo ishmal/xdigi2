@@ -24,17 +24,12 @@ import {Nco, NcoCreate, NcoCreateSimple} from '../nco';
 import {Constants} from '../constants';
 import {Filter, Biquad} from '../filter';
 
-export interface Option {
-    name: string;
-    value: any;
-}
-
 export interface Control {
     name: string;
     type: string;
     tooltip?: string;
     value: any;
-    options?: Option[];
+    options?: Object;
 }
 
 export interface Properties {
