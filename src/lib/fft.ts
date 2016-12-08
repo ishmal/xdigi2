@@ -367,11 +367,14 @@ export function FFTSR(N: number, window: number) : FFT {
       let dataLen = data.length;
       for (let i=0 ; i < dataLen ; i++) {
         let v = data[i];
+        /*
         let j,k;
         for (j=0, k=1 ; j < top ; j++, k++) {
           streamBuf[j] = streamBuf[k];
         }
         streamBuf[j] = v;
+        */
+        streamBuf.shift(); streamBuf.push(v);
         if (++streamCounter >= fftWindow) {
             streamCounter = 0;
             powerSpectrum(streamBuf, psBuf);
