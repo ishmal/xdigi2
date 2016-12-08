@@ -74,20 +74,19 @@ export class TunerImpl implements Tuner {
 
     _par: Digi;
     _canvas: HTMLCanvasElement;
+    _ctx: CanvasRenderingContext2D;
+    _waterfallCanvas: HTMLCanvasElement;
+    _waterfallCtx: CanvasRenderingContext2D;
+    _tempCanvas: HTMLCanvasElement;
+    _tempCtx: CanvasRenderingContext2D;
     _MAX_FREQ: number;
     _dragging: boolean;
     _frequency: number;
     _indices: number[];
     _width: number;
     _height: number;
-    _ctx: CanvasRenderingContext2D;
-    _imgData: ImageData;
-    _imglen: number;
-    _buf8: Uint8ClampedArray;
-    _rowsize: number;
-    _lastRow: number;
     _scopeData: number[];
-    _palette: number[];
+    _palette: string[];
 
     constructor(par: Digi, canvas: HTMLCanvasElement) {
 
@@ -105,14 +104,9 @@ export class TunerImpl implements Tuner {
         this._width = 100;
         this._height = 100;
         this._ctx = null;
-        this._imgData = null;
-        this._imglen = null;
-        this._buf8 = null;
-        this._rowsize = null;
-        this._lastRow = null;
         this._scopeData = [];
 
-        this.setupBitmap();
+        this.setupCanvas();
 
         canvas.setAttribute('tabindex', '1');
 
@@ -140,27 +134,21 @@ export class TunerImpl implements Tuner {
         return xs;
     }
 
-
-    setupBitmap(): void {
-        let canvas = this._canvas;
-        this._width = canvas.width;
-        this._height = canvas.height;
-        // this._par.status('resize w:' + this._width + '  h:' + this._height);
-        this._indices = this.createIndices(this._width, BINS);
-        this._ctx = canvas.getContext('2d');
-        let imgData = this._imgData = this._ctx.createImageData(this._width, this._height);
-        let imglen = this._imglen = imgData.data.length;
-        let buf8 = this._buf8 = imgData.data;
-        for (let i = 0; i < imglen;) {
-            buf8[i++] = 0;
-            buf8[i++] = 0;
-            buf8[i++] = 0;
-            buf8[i++] = 255;
-        }
-        // imgData.data.set(buf8);
-        this._ctx.putImageData(imgData, 0, 0);
-        this._rowsize = imglen / this._height;
-        this._lastRow = imglen - this._rowsize;
+    setupCanvas(): void {
+      let canvas = this._canvas;
+      this._ctx = canvas.getContext('2d');
+      this._width = canvas.width;
+      this._height = canvas.height;
+      // this._par.status('resize w:' + this._width + '  h:' + this._height);
+      this._indices = this.createIndices(this._width, BINS);
+      this._waterfallCanvas = document.createElement("canvas");
+      this._waterfallCanvas.width = this._width;
+      this._waterfallCanvas.height = this._height;
+      this._waterfallCtx = this._waterfallCanvas.getContext('2d');
+      this._tempCanvas = document.createElement("canvas");
+      this._tempCanvas.width = this._width;
+      this._tempCanvas.height = this._height;
+      this._tempCtx = this._tempCanvas.getContext('2d');
     }
 
     // ####################################################################
@@ -250,7 +238,31 @@ export class TunerImpl implements Tuner {
      * Make a palette. tweak this often
      * TODO:  consider using an HSV heat map
      */
-    makePalette(): number[] {
+    makePalette(): string[] {
+        function decimalToHex(d) {
+          let hex = d.toString(16);
+          while (hex.length < 6) {
+            hex = "0" + hex;
+          }
+          return hex;
+        }
+
+        let xs = new Array(256);
+        for (let i = 0; i < 256; i++) {
+            let r = (i < 170) ? 0 : (i - 170) * 3;
+            let g = (i < 85) ? 0 : (i < 170) ? (i - 85) * 3 : 255;
+            let b = (i < 85) ? i * 3 : 255;
+            let col = (r << 16) + (g << 8) + b;
+            xs[i] = '#' + decimalToHex(col);
+        }
+        return xs;
+    }
+
+    /**
+     * Make a palette. tweak this often
+     * TODO:  consider using an HSV heat map
+     */
+    makePalette2(): number[] {
         let xs = new Array(256);
         for (let i = 0; i < 256; i++) {
             let r = (i < 170) ? 0 : (i - 170) * 3;
@@ -271,11 +283,10 @@ export class TunerImpl implements Tuner {
         let ctx = this._ctx;
         let indices = this._indices;
 
-        // ctx.fillStyle = 'red';
         ctx.fillStyle = 'rgba(255, 255, 255, 0.50)';
-        // ctx.lineWidth = 1;
+        ctx.lineWidth = 1;
         ctx.beginPath();
-        let base = height >> 1; // move this around
+        let base = height - 1; // move this around
         ctx.moveTo(0, base);
         let log = Math.log;
         for (let x = 0; x < width; x++) {
@@ -284,75 +295,48 @@ export class TunerImpl implements Tuner {
             // trace('x:' + x + ' y:' + y);
             ctx.lineTo(x, y);
         }
-        ctx.lineTo(width - 1, base);
-        for (let x = width - 1; x >= 0; x--) {
-            let v = log(1.0 + data[indices[x]]) * 12.0;
-            let y = base + v;
-            // trace('x:' + x + ' y:' + y);
-            ctx.lineTo(x, y);
-        }
         ctx.lineTo(0, base);
         ctx.closePath();
-        // let bbox = ctx.getBBox();
-        ctx.fill();
+        ctx.stroke();
     }
 
 
     drawWaterfall(data) {
-        let buf8 = this._buf8;
-        let rowsize = this._rowsize;
-        let imglen = this._imglen;
-        let imgData = this._imgData;
-        let width = this._width;
-        let indices = this._indices;
-        let palette = this._palette;
+      let w = this._width;
+      let h = this._height;
+      let indices = this._indices;
+       let wfCanvas = this._waterfallCanvas;
+       let wfCtx = this._waterfallCtx;
+       let tmpCanvas = this._tempCanvas;
+       let tempCtx = this._tempCtx;
+       let palette = this._palette;
+       let abs = Math.abs;
+       let log = Math.log;
+       let top = h - 1;
 
-        buf8.set(buf8.subarray(rowsize, imglen)); // <-cool, if this works
-        // trace('data:' + data[50]);
+       tempCtx.drawImage(wfCanvas, 0, 0, w, h);
 
-        let idx = this._lastRow;
-        for (let x = 0; x < width; x++) {
-            let v = data[indices[x]];
-            let pix = palette[v & 255];
-            // if (x==50)trace('p:' + p + '  pix:' + pix.toString(16));
-            buf8[idx++] = pix[0];
-            buf8[idx++] = pix[1];
-            buf8[idx++] = pix[2];
-            buf8[idx++] = pix[3];
-        }
-        imgData.data.set(buf8);
-        this._ctx.putImageData(imgData, 0, 0);
-    }
+       // Each pixel is 4500/1024 = 4.39Hz wide
+       // iterate over the elements from the array
+       let last = '';
+       for (let x = 0; x < w; x++) {
+           // draw each pixel with the specific color
+           let v = abs(data[indices[x]]);
+           // if (x==50) trace('v:' + v);
+           let p = Math.floor(Math.min(log(1.0 + v) * 30, 255));
+           // if (x==50)trace('x:' + x + ' p:' + p);
+           let pix = palette[p];
+           if (last !== pix) {
+             wfCtx.fillStyle = pix;
+           }
 
-    drawWaterfall2(data) {
-        let width = this._width;
-        let lastRow = this._lastRow;
-        let palette = this._palette;
-        let buf8 = this._buf8;
-        let rowsize = this._rowsize;
-        let imgData = this._imgData;
-        let indices = this._indices;
-        let imglen = this._imglen;
-        let ctx = this._ctx;
-
-        buf8.set(buf8.subarray(rowsize, imglen)); // <-cool, if this works
-        let idx = lastRow;
-        let abs = Math.abs;
-        let log = Math.log;
-        for (let x = 0; x < width; x++) {
-            let v = abs(data[indices[x]]);
-            // if (x==50) trace('v:' + v);
-            let p = log(1.0 + v) * 30;
-            // if (x==50)trace('x:' + x + ' p:' + p);
-            let pix = palette[p & 255];
-            // if (x==50)trace('p:' + p + '  pix:' + pix.toString(16));
-            buf8[idx++] = pix[0];
-            buf8[idx++] = pix[1];
-            buf8[idx++] = pix[2];
-            buf8[idx++] = pix[3];
-        }
-        imgData.data.set(buf8);
-        ctx.putImageData(imgData, 0, 0);
+           // draw the line on top:
+           wfCtx.fillRect(x, top, 1, 1);
+           last = pix;
+       }
+       // draw the cached (previous) image one line down
+       wfCtx.drawImage(tmpCanvas, 0, 0, w, h, 0, -1, w, h);
+       this._ctx.drawImage(wfCanvas, 0, 0, w, h);
     }
 
 
@@ -456,13 +440,12 @@ export class TunerImpl implements Tuner {
         }
         ctx.stroke();
 
-        // all done
         ctx.restore();
     }
 
     updateData(data: number[]) {
-        this.drawWaterfall2(data);
-        //this.drawSpectrum(data);
+        this.drawWaterfall(data);
+        this.drawSpectrum(data);
         this.drawTuner();
         this.drawScope();
     }

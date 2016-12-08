@@ -46,7 +46,7 @@
   <div v-else>
     <tuner class='col-xs-12' :digi='digi'></tuner>
     <status class='col-xs-12' :digi='digi'></status>
-    <outtext class='col-xs-12' :digi='digi'></outtext>
+    <!--<outtext class='col-xs-12' :digi='digi'></outtext>-->
     <terminal class='col-xs-12' :digi='digi'></terminal>
   </div>
 
@@ -109,8 +109,8 @@ export default {
     runningClass: function() {
       let isOn = digi.isRunning;
       return {
-        "running" : isOn, 
-        "fa-microphone": isOn, 
+        "running" : isOn,
+        "fa-microphone": isOn,
         "not-running": !isOn,
         "fa-microphone-slash": !isOn
       }
@@ -118,10 +118,10 @@ export default {
     txClass: function() {
       let isOn = digi.txMode;
       return {
-        "txon" : isOn, 
-        "fa-volume-up": isOn, 
-        "txoff": !isOn, 
-        "fa-volume-off":!isOn, 
+        "txon" : isOn,
+        "fa-volume-up": isOn,
+        "txoff": !isOn,
+        "fa-volume-off":!isOn,
       }
     }
   }

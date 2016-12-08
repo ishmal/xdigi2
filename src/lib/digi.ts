@@ -115,7 +115,7 @@ export class Digi {
           getText: () => { return ''; }
         };
         this._stattext = { clear: () => { }, putText: (string) => { } };
-        this._fft = FFTSR(Constants.FFT_SIZE, 300);
+        this._fft = FFTSR(Constants.FFT_SIZE, 600);
     }
 
 

@@ -363,16 +363,18 @@ export function FFTSR(N: number, window: number) : FFT {
     }
 
     function powerSpectrumStream(data: number[], cb: (ps: number[]) => any) {
+      let top = N - 1;
       let dataLen = data.length;
       for (let i=0 ; i < dataLen ; i++) {
         let v = data[i];
-        streamBuf[streamPtr++] = v;
-        streamPtr &= fftMask;
+        let j,k;
+        for (j=0, k=1 ; j < top ; j++, k++) {
+          streamBuf[j] = streamBuf[k];
+        }
+        streamBuf[j] = v;
         if (++streamCounter >= fftWindow) {
             streamCounter = 0;
             powerSpectrum(streamBuf, psBuf);
-
-            cb(psBuf);
             cb(psBuf);
         }
       }
