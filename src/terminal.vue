@@ -4,7 +4,7 @@
 
 <script>
 
-import {Terminal} from './lib/digi';
+import {Digi, Terminal} from './lib/digi';
 
 function setupTerminal(digi: Digi, txt: HTMLTextAreaElement) {
 

@@ -9,9 +9,9 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="210mm"
-   height="297mm"
-   viewBox="0 0 744.09448819 1052.3622047"
+   width="512"
+   height="512"
+   viewBox="0 0 511.99999 511.99999"
    id="svg4136"
    version="1.1"
    inkscape:version="0.91 r13725"
@@ -25,17 +25,22 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="7.9195959"
-     inkscape:cx="306.13652"
-     inkscape:cy="500.86764"
+     inkscape:zoom="0.98994949"
+     inkscape:cx="97.185089"
+     inkscape:cy="270.15757"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1894"
      inkscape:window-height="1034"
-     inkscape:window-x="374"
-     inkscape:window-y="242"
-     inkscape:window-maximized="0" />
+     inkscape:window-x="433"
+     inkscape:window-y="126"
+     inkscape:window-maximized="0"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     units="px" />
   <metadata
      id="metadata4141">
     <rdf:RDF>
@@ -51,35 +56,48 @@
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
-     id="layer1">
+     id="layer1"
+     transform="translate(-308.98044,-24.048007)">
     <rect
        style="fill:#0000bc;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect4704"
-       width="35.860416"
-       height="33.587574"
+       width="513.63977"
+       height="512.3999"
        x="308.98044"
-       y="502.46042" />
+       y="23.648111" />
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:43.29094696px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
-       x="312.13406"
-       y="535.21936"
+       style="font-style:normal;font-weight:normal;font-size:697.79315186px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="302.40689"
+       y="546.05414"
        id="text4684"
-       sodipodi:linespacing="125%"><tspan
+       sodipodi:linespacing="125%"
+       transform="scale(1.0394051,0.96208879)"><tspan
          sodipodi:role="line"
          id="tspan4686"
-         x="312.13406"
-         y="535.21936">X</tspan></text>
+         x="302.40689"
+         y="546.05414">X</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:20px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
-       x="308.85413"
-       y="525.69403"
+       style="font-style:normal;font-weight:normal;font-size:286.46615601px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="318.02298"
+       y="371.46695"
        id="text4688"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan4690"
-         x="308.85413"
-         y="525.69403">digi</tspan></text>
+         x="318.02298"
+         y="371.46695">digi</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text4210"
+       y="362.42395"
+       x="305.36246"
+       style="font-style:normal;font-weight:normal;font-size:286.46615601px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       xml:space="preserve"><tspan
+         y="362.42395"
+         x="305.36246"
+         id="tspan4212"
+         sodipodi:role="line">digi</tspan></text>
   </g>
 </svg>

@@ -137,18 +137,25 @@ export class TunerImpl implements Tuner {
     setupCanvas(): void {
       let canvas = this._canvas;
       this._ctx = canvas.getContext('2d');
+      this._ctx.fillStyle = "black";
       this._width = canvas.width;
       this._height = canvas.height;
+      this._ctx.fillStyle = "black";
+      this._ctx.fillRect(0, 0, this._width, this._height);
       // this._par.status('resize w:' + this._width + '  h:' + this._height);
       this._indices = this.createIndices(this._width, BINS);
       this._waterfallCanvas = document.createElement("canvas");
       this._waterfallCanvas.width = this._width;
       this._waterfallCanvas.height = this._height;
       this._waterfallCtx = this._waterfallCanvas.getContext('2d');
+      this._waterfallCtx.fillStyle = "black";
+      this._waterfallCtx.fillRect(0, 0, this._width, this._height);
       this._tempCanvas = document.createElement("canvas");
       this._tempCanvas.width = this._width;
       this._tempCanvas.height = this._height;
       this._tempCtx = this._tempCanvas.getContext('2d');
+      this._tempCtx.fillStyle = "black";
+      this._tempCtx.fillRect(0, 0, this._width, this._height);
     }
 
     // ####################################################################
@@ -307,19 +314,21 @@ export class TunerImpl implements Tuner {
       let indices = this._indices;
        let wfCanvas = this._waterfallCanvas;
        let wfCtx = this._waterfallCtx;
-       let tmpCanvas = this._tempCanvas;
+       let tempCanvas = this._tempCanvas;
        let tempCtx = this._tempCtx;
        let palette = this._palette;
        let abs = Math.abs;
        let log = Math.log;
        let top = h - 1;
 
+       //shift up one pixel
        tempCtx.drawImage(wfCanvas, 0, 0, w, h);
+       wfCtx.drawImage(tempCanvas, 0, -1);
 
        // Each pixel is 4500/1024 = 4.39Hz wide
        // iterate over the elements from the array
        let last = '';
-       for (let x = 0; x < w; x++) {
+       for (let x = 0; x < w ; x++) {
            // draw each pixel with the specific color
            let v = abs(data[indices[x]]);
            // if (x==50) trace('v:' + v);
@@ -335,7 +344,6 @@ export class TunerImpl implements Tuner {
            last = pix;
        }
        // draw the cached (previous) image one line down
-       wfCtx.drawImage(tmpCanvas, 0, 0, w, h, 0, -1, w, h);
        this._ctx.drawImage(wfCanvas, 0, 0, w, h);
     }
 

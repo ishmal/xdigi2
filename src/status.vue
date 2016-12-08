@@ -1,17 +1,29 @@
 <template>
-  <textarea class='status' rows='3'></textarea>
+  <textarea readonly class='status' rows='3'></textarea>
 </template>
 
 <script>
 
-import {OutText} from './lib/digi';
+import {Digi, OutText} from './lib/digi';
+
+function setupStatus(digi: Digi, text: HTMLTextAreaElement) {
+  let textWidget = {
+      clear : () => {
+        text.textContent = "";
+      },
+      putText : (str: string) => {
+        text.textContent += '\n';
+        text.textContent += str;
+      }
+  };
+  digi.statText = textWidget;
+}
 
 export default {
   props: ['digi'],
   mounted: function() {
     let elem = this.$el;
-    let outtext = new OutText(this.digi, elem);
-    this.digi.statText = outtext;
+    setupStatus(this.digi, elem);
   }
 }
 

@@ -50,6 +50,10 @@
     <terminal class='col-xs-12' :digi='digi'></terminal>
   </div>
 
+  <div>
+    <div v-for='a in alerts' class="alert alert-info" role="alert">{{ a.msg }}</div>
+  </div>
+
 </div>
 
 </template>
@@ -78,6 +82,22 @@ let config = newConfig();
 
 let page = "home";
 
+let alerts = [];
+
+function alert(msg) {
+  let alert = {
+    type: 'alert-info',
+    msg: msg
+  };
+  alerts.push(alert);
+  setTimeout(function() {
+    alerts = alerts.filter(function(a) {
+      return (a !== alert);
+    });
+  }, 3000);
+}
+
+
 export default {
   components: {
     tuner,
@@ -92,7 +112,8 @@ export default {
     return {
       digi: digi,
       config: config,
-      page: page
+      page: page,
+      alerts: alerts
     };
   },
 
