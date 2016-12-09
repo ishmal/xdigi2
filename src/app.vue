@@ -61,6 +61,7 @@
 <script>
 
 import {Digi} from './lib/digi';
+import {AudioFactory} from './lib/audio';
 declare var require: any;
 const tuner = require('./tuner.vue').default;
 const status = require('./status.vue').default;
@@ -69,7 +70,11 @@ const terminal = require('./terminal.vue').default;
 const settings = require('./settings.vue').default;
 const prefs = require('./prefs.vue').default;
 
-const digi = new Digi();
+let digi = new Digi();
+
+document.addEventListener('deviceready', function() {
+  digi._audioInput = AudioFactory.getInput(digi);
+});
 
 function newConfig() {
   return {

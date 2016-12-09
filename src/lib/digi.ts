@@ -19,8 +19,7 @@
 
 import {Constants} from './constants';
 import {FFT, FFTSR} from './fft';
-import {AudioInput, AudioOutput} from './audio';
-import {AudioFactory} from './audiofactory';
+import {AudioInput, AudioOutput, AudioFactory} from './audio';
 import {Mode} from './mode/mode';
 import {PskMode} from './mode/psk';
 import {RttyMode} from './mode/rtty';
@@ -115,7 +114,7 @@ export class Digi {
           getText: () => { return ''; }
         };
         this._stattext = { clear: () => { }, putText: (string) => { } };
-        this._fft = FFTSR(Constants.FFT_SIZE, 600);
+        this._fft = FFTSR(Constants.FFT_SIZE, 800);
     }
 
 
@@ -154,7 +153,8 @@ export class Digi {
     }
 
     get sampleRate() {
-        return this._audioInput.sampleRate;
+        //return this._audioInput.sampleRate;
+        return 8000;
     }
 
 
