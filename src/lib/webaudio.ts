@@ -61,6 +61,7 @@ interface AudioContext {
 interface Window {
     AudioContext: AudioContext;
     webkitAudioContext: AudioContext;
+    audioInput: any;
 }
 
 declare var window: Window;
@@ -292,52 +293,73 @@ export class WebAudioInput extends AudioInput {
         this.isRunning = false;
     }
 
+    setupSource() {
+      let outBufSize = 1024;
+      let outPtr = 0;
+      let outCtr = 0;
+      let outBuf = new Array(outBufSize);
+      let bufferSize = 8192;
+      //let decimator = Resampler.create(this.decimation);
+      this.inputNode = this.actx.createScriptProcessor(bufferSize, 1, 1);
+      this.inputNode.onaudioprocess = (e) => {
+          if (!this.isRunning) {
+              return;
+          }
+          let input = e.inputBuffer.getChannelData(0);
+          let len = input.length;
+          //let d = decimator;
+          for (let i = 0; i < len; i++) {
+              outCtr++;
+              if (outCtr >= 7) {
+                outBuf[outPtr++] = input[i];
+                outCtr = 0;
+                if (outPtr >= outBufSize) {
+                  this.receive(outBuf)
+                  outPtr = 0;
+                }
+              }
+          }
+      };
+
+      this.source.connect(this.inputNode);
+      this.inputNode.connect(this.actx.destination);
+      this.isRunning = true;
+    }
+
     startStream(newstream: MediaStream) {
-
         this.stream = newstream;
-
-        /**
-         * workaround for a Firefox bug.  Keep a global ref to source to prevent gc.
-         * http://goo.gl/LjEjUF2
-         * also a chrome bug
-         * save source and inputNode in something that lasts for the term of the program
-         */
         this.source = this.actx.createMediaStreamSource(newstream);
+        this.setupSource();
+    }
 
-        let outBufSize = 1024;
-        let outPtr = 0;
-				let outCtr = 0;
-        let outBuf = new Array(outBufSize);
-        let bufferSize = 8192;
-        //let decimator = Resampler.create(this.decimation);
-        this.inputNode = this.actx.createScriptProcessor(bufferSize, 1, 1);
-        this.inputNode.onaudioprocess = (e) => {
-            if (!this.isRunning) {
-                return;
-            }
-            let input = e.inputBuffer.getChannelData(0);
-            let len = input.length;
-            //let d = decimator;
-            for (let i = 0; i < len; i++) {
-                outCtr++;
-								if (outCtr >= 7) {
-									outBuf[outPtr++] = input[i];
-									outCtr = 0;
-									if (outPtr >= outBufSize) {
-										this.receive(outBuf)
-										outPtr = 0;
-									}
-								}
-            }
-        };
+    setupAudioInput() {
+      let bufferSize = 8192;
+      //let decimator = Resampler.create(this.decimation);
+      this.inputNode = this.actx.createScriptProcessor(bufferSize, 1, 1);
+      this.inputNode.onaudioprocess = (e) => {
+          if (!this.isRunning) {
+              return;
+          }
+          let input = e.inputBuffer.getChannelData(0);
+          this.receive(input);
+      };
 
-        this.source.connect(this.inputNode);
-        this.inputNode.connect(this.actx.destination);
-				this.isRunning = true;
+      this.source.connect(this.inputNode);
+      this.inputNode.connect(this.actx.destination);
+      this.isRunning = true;
     }
 
     open(): boolean {
-        if (navigator.getUserMedia) {
+        //try cordova plugin first
+        let audioInput = window.audioInput;
+        if (audioInput) {
+          this.source = audioInput;
+          audioInput.start({
+            sampleRate: audioInput.SAMPLERATE.TELEPHONE_8000Hz,
+            streamToWebAudio: true
+          });
+          this.setupAudioInput();
+        } else if (navigator.getUserMedia) {
             navigator.getUserMedia(
                 { audio: true },
                 stream => {
