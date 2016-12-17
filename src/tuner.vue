@@ -2,11 +2,11 @@
   <div class='tuner'>
     <canvas class='tuner-canvas' width='1024' height='150'></canvas>
     <div class='row tuner-buttons'>
-      <a class='col-xs-2 fa fa-backward' href='#' v-on:click='fastDown()'></a>
-      <a class='col-xs-2 fa fa-step-backward' href='#' v-on:click='down()'></a>
+      <a class='col-xs-2 fa fa-2x fa-backward' href='#' v-on:click='fastDown()'></a>
+      <a class='col-xs-2 fa fa-2x fa-step-backward' href='#' v-on:click='down()'></a>
       <span class='col-xs-4'></span>
-      <a class='col-xs-2 fa fa-step-forward' href='#' v-on:click='up()'></a>
-      <a class='col-xs-2 fa fa-forward' href='#' v-on:click='fastUp()'></a>
+      <a class='col-xs-2 fa fa-2x fa-step-forward' href='#' v-on:click='up()'></a>
+      <a class='col-xs-2 fa fa-2x fa-forward' href='#' v-on:click='fastUp()'></a>
     </div>
   </div>
 </template>

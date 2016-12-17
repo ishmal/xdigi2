@@ -2,40 +2,25 @@
 
 <div class='app'>
 
-  <nav class="appnav row navbar navbar-light bg-faded">
+  <div class="appnav row">
 
-    <a class="navbar-brand"
+    <a class="home col-xs-2"
      v-on:click='page="home"' href="#">Xdigi</a>
 
-    <ul class='nav navbar-nav'>
+    <select class='dropdown-toggle col-xs-2' v-model='digi.mode'>
+      <option v-for="m in digi.modes" :value="m">{{ m.getProperties().name }}</option>
+    </select>
 
-    <li class='nav-item dropdown'>
-      <select class='dropdown-toggle' v-model='digi.mode'>
-        <option v-for="m in digi.modes" :value="m">{{ m.getProperties().name }}</option>
-      </select>
-    </li>
+    <a class="fa fa-2x fa-wrench col-xs-2" v-on:click='page="settings"' href="#"></a>
 
-    <li class='nav-item'>
-      <a class="nav-link fa fa-wrench" v-on:click='page="settings"' href="#"></a>
-    </li>
+    <a class="fa fa-2x fa-pencil-square-o col-xs-2" v-on:click='page="prefs"' href="#"></a>
 
-    <li class='nav-item'>
-      <a class="nav-link fa fa-pencil-square-o" v-on:click='page="prefs"' href="#"></a>
-    </li>
+    <a class="fa fa-2x col-xs-2" :class='runningClass'
+      v-on:click='digi.onOffToggle()' href="#"></a>
 
-    <li class='nav-item'>
-      <a class="nav-link fa" :class='runningClass'
-        v-on:click='digi.onOffToggle()' href="#"></a>
-    </li>
-
-    <li class='nav-item'>
-      <a class='nav-link fa' :class='txClass'
-        v-on:click='digi.txModeToggle()'></a>
-    </li>
-
-  </ul>
-
-  </nav>
+    <a class='fa fa-2x col-xs-2' :class='txClass'
+      v-on:click='digi.txModeToggle()'></a>
+</div>
 
   <div v-if="page === 'settings'">
     <settings class='col-xs-12' :digi='digi'></settings>
@@ -161,10 +146,17 @@ export default {
 
   .app {
     height: 100%;
+    width: 100%;
   }
 
   .appnav {
     height: 10%;
+    width: 100%;
+    background-color: #ccccff;
+  }
+
+  .home {
+    font-size: larger;
   }
 
   .running {
