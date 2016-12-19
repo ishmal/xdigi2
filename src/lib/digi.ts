@@ -188,6 +188,10 @@ export class Digi {
         return this._mode.frequency;
     }
 
+    toggleUseAfc() {
+        this._mode.useAfc = !this._mode.useAfc;
+    }
+
     get useAfc(): boolean {
         return this._mode.useAfc;
     }
