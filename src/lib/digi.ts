@@ -153,8 +153,7 @@ export class Digi {
     }
 
     get sampleRate() {
-        //return this._audioInput.sampleRate;
-        return 8000;
+        return this._audioInput.sampleRate;
     }
 
 
