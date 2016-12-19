@@ -154,6 +154,7 @@ export function FFTSR(N: number, window: number) : FFT {
     let N2 = N >> 1;
     let fftWindow = window;
     let fftMask = N - 1; //for streaming
+    //let streamBuf = [];
     let streamBuf = new Array(N);
     let streamPtr = 0; //for streaming
     let streamCounter = 0;
@@ -360,6 +361,26 @@ export function FFTSR(N: number, window: number) : FFT {
     function powerSpectrum(input, ps) {
         apply(input);
         computePowerSpectrum(ps);
+    }
+
+    function powerSpectrumStream2(data: number[], 
+        cb: (ps: number[]) => any) {
+      let dataIdx = 0;
+      let dataLen = data.length;
+      while (dataIdx < dataLen) {
+          let bufRemaining = fftWindow - streamCounter;
+          let dataRemaining = dataLen - dataIdx;
+          let siz = Math.min(bufRemaining, dataRemaining);
+          streamBuf.concat(data.slice(dataIdx, siz));
+          dataIdx += siz;
+          streamCounter += siz;
+          if (streamCounter >= fftWindow) {
+              streamCounter = 0;
+                powerSpectrum(streamBuf, psBuf);
+                cb(psBuf);
+                streamBuf = [];
+          }
+      }
     }
 
     function powerSpectrumStream(data: number[], cb: (ps: number[]) => any) {

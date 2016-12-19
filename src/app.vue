@@ -22,13 +22,13 @@
       v-on:click='digi.txModeToggle()'></a>
 </div>
 
-  <div v-if="page === 'settings'">
+  <div v-show="page === 'settings'">
     <settings class='col-xs-12' :digi='digi'></settings>
   </div>
-  <div v-else-if="page === 'prefs'">
+  <div v-show="page === 'prefs'">
     <prefs class='col-xs-12' :digi='digi' :config='config'></prefs>
   </div>
-  <div v-else>
+  <div v-show="page === 'home'">
     <tuner class='col-xs-12' :digi='digi'></tuner>
     <status class='col-xs-12' :digi='digi'></status>
     <!--<outtext class='col-xs-12' :digi='digi'></outtext>-->
