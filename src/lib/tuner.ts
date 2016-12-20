@@ -34,6 +34,26 @@ function error(msg) {
     }
 }
 
+
+interface Point {
+    x: number;
+    y: number;
+}
+
+class Draggable {
+    pos0: Point;
+
+    constructor(pos0: Point) {
+        this.pos0 = pos0;
+    }
+
+    drag(p: Point) {
+    }
+
+    end(p: Point) {
+    }
+}
+
 export interface Tuner {
 
     frequency: number;
@@ -480,7 +500,7 @@ export class TunerImpl implements Tuner {
     _par: Digi;
     _canvas: HTMLCanvasElement;
     _MAX_FREQ: number;
-    _dragging: boolean;
+    _draggable: Draggable;
     _frequency: number;
     _indices: number[];
     _width: number;
@@ -493,6 +513,7 @@ export class TunerImpl implements Tuner {
     _lastRow: number;
     _scopeData: number[];
     _palette: number[];
+    _tuningRate: number;
 
     constructor(par: Digi, canvas: HTMLCanvasElement) {
 
@@ -504,7 +525,7 @@ export class TunerImpl implements Tuner {
         this._par = par;
         this._canvas = canvas;
         this._MAX_FREQ = par.sampleRate * 0.5;
-        this._dragging = false;
+        this._draggable = null;
         this._frequency = 1000;
         this._indices = null;
         this._width = 100;
@@ -516,6 +537,7 @@ export class TunerImpl implements Tuner {
         this._rowsize = null;
         this._lastRow = null;
         this._scopeData = [];
+        this._tuningRate = 1.0;
 
         this.setupBitmap();
 
@@ -534,6 +556,14 @@ export class TunerImpl implements Tuner {
 
     get frequency(): number {
         return this._frequency;
+    }
+
+    set tuningRate(rate: number) {
+        this._tuningRate = rate;
+    }
+
+    get tuningRate(): number {
+        return this._tuningRate;
     }
 
     createIndices(targetsize: number, sourcesize: number): number[] {
@@ -596,34 +626,55 @@ export class TunerImpl implements Tuner {
             return { x: x, y: y };
         }
 
-        canvas.onclick = (event) => {
-            mouseFreq(event);
-        };
-        canvas.onmousedown = (event) => {
-            self._dragging = true;
-        };
-        canvas.onmouseup = (event) => {
-            self._dragging = false;
-        };
-        canvas.onmousemove = (event) => {
-            if (self._dragging) {
+        let didDrag = false;
+
+        function onClick(event) {
+            if (!didDrag) {
                 mouseFreq(event);
             }
-        };
-        canvas.ontouchstart = (event) => {
-            self._dragging = true;
+            self._draggable = null;
             event.preventDefault();
-        };
-        canvas.ontouchend = (event) => {
-            self._dragging = false;
+        }
+        function onMouseDown(event) {
+            didDrag = false;
+            let pos = getMousePos(canvas, event);
+            let freq0 = self.frequency;
+            let d = new Draggable(pos);
+            d.drag = (p: Point) => {
+                let dx = p.x - d.pos0.x;
+                dx *= self._tuningRate; //cool!
+                let freqDiff = self._MAX_FREQ * dx / self._width;
+                self.frequency = freq0 + freqDiff;
+            };
+            self._draggable = d;
             event.preventDefault();
-        };
-        canvas.ontouchmove = (event) => {
-            if (self._dragging) {
-                mouseFreq(event);
+        }
+        function onMouseUp(event) {
+            if (self._draggable) {
+                let pos = getMousePos(canvas, event);
+                self._draggable.end(pos);
             }
+            self._draggable = null;
             event.preventDefault();
-        };
+        }
+        function onMouseMove(event) {
+            let d = self._draggable;
+            if (d) {
+                didDrag = true;
+                let pos = getMousePos(canvas, event);
+                d.drag(pos);
+            }
+            event.preventDefault();            
+        }
+
+        canvas.onclick = onClick;
+        canvas.onmousedown = onMouseDown;
+        canvas.onmouseup = onMouseUp;
+        canvas.onmousemove = onMouseMove;
+        canvas.ontouchstart = onMouseDown;
+        canvas.ontouchend = onMouseUp;
+        canvas.ontouchmove = onMouseMove;
+
         // fine tuning, + or - one hertz
         canvas.onkeydown = (evt) => {
             let key = evt.which;
