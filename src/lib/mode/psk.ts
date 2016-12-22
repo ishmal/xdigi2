@@ -161,7 +161,7 @@ const descriptions = [
 ];
 
 /**
- * this is a table of index->bit seqs.  Ex: 116('t') is Seq(true, false, true)
+ * this is a table of index->bit seqs.  Ex: 116('t') is [true, false, true]
  */
 const encodeTable = descriptions.map(s => {
     let chars = s.split('');
@@ -201,21 +201,21 @@ function printTables() {
 
 
 export interface Timer {
-    update(z: Complex, f: (Complex) => void);
+    update(r: number, i:number, f: (r:number, i:number) => void);
 }
 
 function createEarlyLate(samplesPerSymbol): Timer {
-    let size = samplesPerSymbol | 0;
-    let half = size >> 1;
+    let size = Math.round(samplesPerSymbol);
+    let half = Math.floor(samplesPerSymbol * 0.5);
     let buf = new Float32Array(size);
     let bitclk = 0.0;
 
 
-    function update(z: Complex, f: (Complex) => void) {
-        let idx = bitclk | 0;
+    function update(r: number, i: number, f: (a:number, b:number) => void) {
+        let idx = Math.round(bitclk);
         let sum = 0.0;
         let ampsum = 0.0;
-        let mag = ComplexOps.mag(z);
+        let mag = r * r + i * i;
         buf[idx] = 0.8 * buf[idx] + 0.2 * mag;
 
         for (let i = 0; i < half; i++) {
@@ -230,7 +230,7 @@ function createEarlyLate(samplesPerSymbol): Timer {
             bitclk += size;
         } else if (bitclk >= size) {
             bitclk -= size;
-            f(z);
+            f(r, i);
         }
 
     }
@@ -273,6 +273,7 @@ export class PskMode extends Mode {
     _txPtr: number;
     _txPhase: number[][];
     _txQueue: number[][];
+    _timer: Timer = null;
 
 
     constructor(par) {
@@ -350,15 +351,24 @@ export class PskMode extends Mode {
 
     _setRate(v: number) {
         super._setRate(v);
-        this._ilp = Biquad.lowPass(v * 0.5, this.par.sampleRate);
-        this._qlp = Biquad.lowPass(v * 0.5, this.par.sampleRate);
-        // bpf = FIR.bandpass(13, -0.7*this.getRate(), 0.7*this.getRate(), this.getSampleRate());
-        this._symbollen = this.samplesPerSymbol | 0;
-        this._halfSym = this._symbollen >> 1;
+        this._ilp = Biquad.lowPass(v * 0.707, this.par.sampleRate);
+        this._qlp = Biquad.lowPass(v * 0.707, this.par.sampleRate);
+        this._symbollen = Math.round(this.samplesPerSymbol);
+        this._halfSym =  Math.round(this.samplesPerSymbol * 0.5);
+        this._timer = createEarlyLate(this._symbollen);
         this.setupTransmit();
     }
 
     receive(z) {
+        let r = this._ilp.update(z.r);
+        let i = this._qlp.update(z.i);
+        this.scopeOut(r, i);
+        this._timer.update(r, i, (a, b) => {
+            this.processSymbol(a, b);
+        });
+    }
+
+    receive2(z) {
         let i = this._ilp.update(z.r);
         let q = this._qlp.update(z.i);
         this.scopeOut(i, q);

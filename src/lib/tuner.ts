@@ -55,18 +55,13 @@ class Draggable {
 }
 
 export interface Tuner {
-
     frequency: number;
-
     showScope(data: number): void;
-
     update(data: number[]): void;
-
 }
 
 export class TunerDummy implements Tuner {
     constructor() {
-
     }
 
     get frequency(): number { return 0; }
@@ -301,8 +296,6 @@ export class TunerImpl2 implements Tuner {
         return xs;
     }
 
-
-
     drawSpectrum(data) {
         let width = this._width;
         let height = this._height;
@@ -326,7 +319,6 @@ export class TunerImpl2 implements Tuner {
         ctx.closePath();
         ctx.stroke();
     }
-
 
     drawWaterfall(data) {
       let w = this._width;
@@ -635,6 +627,7 @@ export class TunerImpl implements Tuner {
             self._draggable = null;
             event.preventDefault();
         }
+
         function onMouseDown(event) {
             didDrag = false;
             let pos = getMousePos(canvas, event);
@@ -649,6 +642,7 @@ export class TunerImpl implements Tuner {
             self._draggable = d;
             event.preventDefault();
         }
+
         function onMouseUp(event) {
             if (self._draggable) {
                 let pos = getMousePos(canvas, event);
@@ -657,6 +651,7 @@ export class TunerImpl implements Tuner {
             self._draggable = null;
             event.preventDefault();
         }
+
         function onMouseMove(event) {
             let d = self._draggable;
             if (d) {
@@ -723,20 +718,17 @@ export class TunerImpl implements Tuner {
     drawSpectrum(data) {
         let width = this._width;
         let height = this._height;
-
         let ctx = this._ctx;
         let indices = this._indices;
 
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.50)';
         ctx.lineWidth = 1;
         ctx.beginPath();
-        let base = height - 1; // move this around
+        let base = height - 1;
         ctx.moveTo(0, base);
         let log = Math.log;
         for (let x = 0; x < width; x++) {
             let v = log(1.0 + data[indices[x]]) * 12.0;
             let y = base - v;
-            // trace('x:' + x + ' y:' + y);
             ctx.lineTo(x, y);
         }
         ctx.lineTo(0, base);
@@ -782,7 +774,7 @@ export class TunerImpl implements Tuner {
         let imglen = this._imglen;
         let ctx = this._ctx;
 
-        buf8.set(buf8.subarray(rowsize, imglen)); // <-cool, if this works
+        buf8.set(buf8.subarray(rowsize, imglen)); //scroll up one row
         let idx = lastRow;
         let abs = Math.abs;
         let log = Math.log;

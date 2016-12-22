@@ -6,8 +6,8 @@
       <span class='col-xs-2'></span>
       <a class='col-xs-2' href='#' v-on:click='setTuningRate(1.0)'>1:1</a>
       <a class='col-xs-2' href='#' v-on:click='setTuningRate(0.5)'>1:2</a>
-      <a class='col-xs-2' href='#' v-on:click='setTuningRate(0.2)'>1:5</a>
       <a class='col-xs-2' href='#' v-on:click='setTuningRate(0.1)'>1:10</a>
+      <a class='col-xs-2' href='#' v-on:click='setTuningRate(0.01)'>1:100</a>
     </div>
   </div>
 </template>

@@ -39,6 +39,13 @@ export interface Properties {
     controls: Control[];
 }
 
+export class Afc {
+    adjust() {
+    }
+    compute(ps: number[]) {
+    }
+}
+
 
 export class Mode {
 
@@ -48,6 +55,7 @@ export class Mode {
     _loBin: number;
     _freqBin: number;
     _hiBin: number;
+    _afc: Afc;
     _useAfc: boolean;
     _rate: number;
     _nco: Nco;
@@ -63,14 +71,10 @@ export class Mode {
     constructor(par: Digi) {
         this.par = par;
         this._frequency = 1000;
-        this._afcFilter = Biquad.lowPass(1.0, 100.0);
-        this._loBin = 0;
-        this._freqBin = 0;
-        this._hiBin = 0;
-        this.adjustAfc();
+        this.setupAfc();
         this._useAfc = false;
         this._rate = 31.25;
-        this._nco = NcoCreate(this._frequency, par.sampleRate);
+        this._nco = NcoCreateSimple(this._frequency, par.sampleRate);
         this._txNco = NcoCreateSimple(this._frequency, par.sampleRate);
         this._cwBuffer = new Array(1024)
         this._cwBuffer.fill(1.0);
@@ -92,7 +96,7 @@ export class Mode {
         this._frequency = freq;
         this._nco.setFrequency(freq);
         this._txNco.setFrequency(freq);
-        this.adjustAfc();
+        this._afc.adjust();
     }
 
     get frequency(): number {
@@ -103,15 +107,30 @@ export class Mode {
         return 0;
     }
 
-    adjustAfc() {
-        let freq = this._frequency;
-        let fs = this.par.sampleRate;
-        let bw = this.bandwidth;
-        let binWidth = fs * 0.5 / Constants.BINS;
-        this._loBin = ((freq - bw * 0.707) / binWidth) | 0;
-        this._freqBin = (freq / binWidth) | 0;
-        this._hiBin = ((freq + bw * 0.707) / binWidth) | 0;
-        // console.log('afc: ' + loBin + ',' + freqBin + ',' + hiBin);
+    setupAfc() {
+        let a = new Afc();
+        let afcFilter = Biquad.lowPass(1.0, 100.0);
+        let loBin, freqBin, hiBin;
+        a.adjust = () => {
+            let freq = this._frequency;
+            let fs = this.par.sampleRate;
+            let bw = this.bandwidth;
+            let binWidth = fs * 0.5 / Constants.BINS;
+            loBin = Math.round((freq - bw) / binWidth);
+            freqBin = Math.round(freq / binWidth);
+            hiBin = Math.round((freq + bw) / binWidth);
+        };
+        a.compute = (ps: number[]) => {
+            let sum = 0;
+            let sumScale = 0;
+            for (let i = loBin, j = freqBin + 1; i < freqBin; i++, j++) {
+                sum += ps[j] - ps[i];
+                sumScale += ps[j] + ps[i];
+            }
+            let normalized = sum / sumScale;
+            this.frequency -= normalized;
+        };
+        this._afc = a;
     }
 
     get useAfc(): boolean {
@@ -120,22 +139,6 @@ export class Mode {
 
     set useAfc(v: boolean) {
         this._useAfc = v;
-    }
-
-    computeAfc(ps) {
-        let sum = 0;
-        let loBin = this._loBin;
-        let freqBin = this._freqBin;
-        let hiBin = this._hiBin;
-        for (let i = loBin, j = hiBin; i < freqBin; i++ , j--) {
-            if (ps[j] > ps[i]) {
-                sum++;
-            } else if (ps[i] > ps[j]) {
-                sum--;
-            }
-        }
-        let filtered = this._afcFilter.update(sum);
-        this._nco.setError(filtered);
     }
 
     status(msg) {
@@ -150,7 +153,7 @@ export class Mode {
      */
     _setRate(v: number) {
         this._rate = v;
-        this.adjustAfc();
+        this._afc.adjust();
         console.log('Fs: ' + this.par.sampleRate + ' rate: ' + v +
             ' sps: ' + this.samplesPerSymbol);
     }
@@ -175,7 +178,7 @@ export class Mode {
 
     receiveFft(ps: number[]): void {
         if (this._useAfc) {
-            this.computeAfc(ps);
+            this._afc.compute(ps);
         }
     }
 
