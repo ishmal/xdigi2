@@ -6,14 +6,15 @@
 
 import {Digi, OutText} from './lib/digi';
 
-function setupStatus(digi: Digi, text: HTMLTextAreaElement) {
+function setupStatus(digi: Digi, txt: HTMLTextAreaElement) {
   let textWidget = {
       clear : () => {
-        text.textContent = "";
+        txt.value = "";
       },
       putText : (str: string) => {
-        text.textContent += '\n';
-        text.textContent += str;
+        let s = txt.value
+        txt.value = s + str;
+        txt.scrollTop = txt.scrollHeight;
       }
   };
   digi.statText = textWidget;

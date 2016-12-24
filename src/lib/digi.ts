@@ -159,7 +159,10 @@ export class Digi {
 
     set mode(v: Mode) {
         this._mode = v;
-        // this.status('mode switched');
+        let name = v.getProperties().name;
+        let fs = this.sampleRate.toFixed(1);
+        let msg = `mode : ${name}  fs: ${fs}  rate: ${v.rate}`; 
+        this.status(msg);
     }
 
     get mode(): Mode {
