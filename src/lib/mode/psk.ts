@@ -309,6 +309,7 @@ export class PskMode extends Mode {
     }
 
      getProperties(): Properties {
+         let that = this;
          let cfg = {
             name: 'psk',
             description: 'phase-shift keying mode',
@@ -318,10 +319,10 @@ export class PskMode extends Mode {
                     name: 'rate',
                     type: 'choice',
                     get value(): number {
-                        return this.rate;
+                        return that.rate;
                     },
                     set value(v: number) {
-                        this.rate = v;
+                        that.rate = v;
                     },
                     options: {
                         '31': 31.25,
@@ -333,10 +334,10 @@ export class PskMode extends Mode {
                     name: 'qpsk',
                     type: 'boolean',
                     get value(): boolean {
-                        return this._qpskMode;
+                        return that._qpskMode;
                     },
                     set value(v: boolean) {
-                        this._qpskMode = v;
+                        that._qpskMode = v;
                     }
                 }
             ]
@@ -368,24 +369,7 @@ export class PskMode extends Mode {
         });
     }
 
-    receive2(z) {
-        let i = this._ilp.update(z.r);
-        let q = this._qlp.update(z.i);
-        this.scopeOut(i, q);
-        let sign = (i > 0) ? 1 : -1; // Math.sign() not on Chrome
-        if (sign !== this._lastSign) {
-            this._samples = 0;
-        } else {
-            this._samples++;
-        }
-        if ((this._samples % this._symbollen) === this._halfSym) {
-            this.processSymbol(i, q);
-            // processBit(sign>0);
-        }
-        this._lastSign = sign;
-    }
-
-
+ 
     scopeOut(i, q) {
         if (!(++this._ssctr & 1)) {
             return; // skip items

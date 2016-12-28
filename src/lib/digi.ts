@@ -118,12 +118,19 @@ export class Digi {
     }
 
 
-    receive(data: number[]) {
+    receive2(data: number[]) {
       this._mode.receiveData(data);
       this._fft.powerSpectrumStream(data, (psbuf) => {
-        this.tuner.update(psbuf);
-        this.mode.receiveFft(psbuf);
+        //this._tuner.update(psbuf);
+        this._mode.receiveFft(psbuf);
       });
+    }
+
+    receive(data: number[]) {
+      this._mode.receiveData(data);
+      let psbuf = this._audioInput.getFftData();
+        this._tuner.update(psbuf);
+        //this.mode.receiveFft(psbuf);
     }
 
     log(msg) {

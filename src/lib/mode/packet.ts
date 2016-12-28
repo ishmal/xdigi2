@@ -374,6 +374,7 @@ class PacketMode extends FskBase {
     }
 
     getProperties():Properties {
+        let that = this;
         return {
             name: 'packet',
             description: 'asynchromous 8-bit packet mode',
@@ -384,10 +385,10 @@ class PacketMode extends FskBase {
                     type: 'choice',
                     tooltip: 'packet data rate',
                     get value(): number {
-                        return this.rate;
+                        return that.rate;
                     },
                     set value(v: number) {
-                        this.rate = v;
+                        this.that = v;
                     },
                     options: {
                         '300': 300.0,
@@ -399,10 +400,10 @@ class PacketMode extends FskBase {
                     type: 'choice',
                     tooltip: 'frequency distance between mark and space',
                     get value(): number {
-                        return this.shift;
+                        return that.shift;
                     },
                     set value(v: number) {
-                        this.shift = v;
+                        that.shift = v;
                     },
                     options: {
                         '200': 200.0,

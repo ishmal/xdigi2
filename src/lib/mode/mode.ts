@@ -116,19 +116,21 @@ export class Mode {
             let fs = this.par.sampleRate;
             let bw = this.bandwidth;
             let binWidth = fs * 0.5 / Constants.BINS;
-            loBin = Math.round((freq - bw) / binWidth);
             freqBin = Math.round(freq / binWidth);
-            hiBin = Math.round((freq + bw) / binWidth);
+            loBin = freqBin - 15;
+            hiBin = freqBin + 15;
         };
         a.compute = (ps: number[]) => {
             let sum = 0;
             let sumScale = 0;
             for (let i = loBin, j = freqBin + 1; i < freqBin; i++, j++) {
-                sum += ps[j] - ps[i];
-                sumScale += ps[j] + ps[i];
+                let psi = Math.abs(ps[i]);
+                let psj = Math.abs(ps[j]);
+                sum += psj - psi;
+                sumScale += psj + psi;
             }
             let normalized = sum / sumScale;
-            this.frequency -= normalized;
+            this.par.setFrequency(this.frequency - normalized);
         };
         this._afc = a;
     }
@@ -154,7 +156,7 @@ export class Mode {
     _setRate(v: number) {
         this._rate = v;
         this._afc.adjust();
-        console.log('Fs: ' + this.par.sampleRate + ' rate: ' + v +
+        this.status('Fs: ' + this.par.sampleRate + ' rate: ' + v +
             ' sps: ' + this.samplesPerSymbol);
     }
 
@@ -187,7 +189,7 @@ export class Mode {
         for (let i=0 ; i < len ; i++) {
           let v = data[i];
           let cs = this._nco.next();
-          this.receive({ r: v * cs.r, i: -v * cs.i });
+          this.receive({ r: v * cs.r, i: v * cs.i });
         }
     }
 

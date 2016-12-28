@@ -190,6 +190,7 @@ export class NavtexMode extends FskBase {
     }
 
     getProperties(): Properties {
+        let that = this;
         return {
             name: 'navtex',
             description: '7-bit Navtex marine mode',
@@ -199,20 +200,20 @@ export class NavtexMode extends FskBase {
                     name: 'inv',
                     type: 'boolean',
                     get value(): boolean {
-                        return this.inverted;
+                        return that.inverted;
                     },
                     set value(v: boolean) {
-                        this.inverted = v;
+                        that.inverted = v;
                     }
                 },
                 {
                     name: 'UoS',
                     type: 'boolean',
                     get value(): boolean {
-                        return this._unshiftOnSpace;
+                        return that._unshiftOnSpace;
                     },
                     set value(v: boolean) {
-                        this._unshiftOnSpace = v;
+                        that._unshiftOnSpace = v;
                     }
                 }
             ]

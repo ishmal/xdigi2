@@ -131,6 +131,7 @@ class RttyMode extends FskBase {
     }
 
     getProperties(): Properties {
+        let that = this;
         return {
             name: 'rtty',
             description: 'Asynchronous 5-bit radio-teletype mode',
@@ -141,10 +142,10 @@ class RttyMode extends FskBase {
                     type: 'choice',
                     tooltip: 'rtty baud rate',
                     get value(): number {
-                        return this.rate;
+                        return that.rate;
                     },
                     set value(v: number) {
-                        this.rate = v;
+                        that.rate = v;
                     },
                     options: {
                         '45': 45.45,
@@ -158,10 +159,10 @@ class RttyMode extends FskBase {
                     type: 'choice',
                     tooltip: 'frequency distance between mark and space',
                     get value(): number {
-                        return this.shift;
+                        return that.shift;
                     },
                     set value(v: number) {
-                        this.shift = v;
+                        that.shift = v;
                     },
                     options: {
                         '85': 85.0,
@@ -174,27 +175,27 @@ class RttyMode extends FskBase {
                     name: 'inv',
                     type: 'boolean',
                     get value() {
-                        return this.inverted;
+                        return that.inverted;
                     },
                     set value(v) {
-                        this.inverted = v;
+                        that.inverted = v;
                     }
                 },
                 {
                     name: 'UoS',
                     type: 'boolean',
                     get value() {
-                        return this._unshiftOnSpace;
+                        return that._unshiftOnSpace;
                     },
                     set value(v) {
-                        this._unshiftOnSpace = v;
+                        that._unshiftOnSpace = v;
                     }
                 }
             ]
         };
     }
 
-    setRate(v) {
+    _setRate(v) {
         super._setRate(v);
         this._symbollen = Math.round(this.samplesPerSymbol);
         this._halfsym = this._symbollen >> 1;

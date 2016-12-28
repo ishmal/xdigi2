@@ -1,6 +1,8 @@
 <template>
   <div>
 
+  <a href='#' :click='exitApp()'>Exit</a>
+
   <div class='settings-header row' >
     <div class='row'>
       <span class='col-xs-12'>{{ props.description }}</span>
@@ -23,6 +25,11 @@
 
 <script>
 
+interface Navigator {
+  app: any;
+}
+declare var navigator: Navigator;
+
 import {OutText} from './lib/digi';
 
 export default {
@@ -31,6 +38,13 @@ export default {
     let elem = this.$el;
     let outtext = new OutText(this.digi, elem);
     this.digi.outtext = outtext;
+  },
+  methods: {
+    exitApp: function() {
+      if (navigator.app) {
+        navigator.app.exitApp();
+      }
+    }
   },
   data() {
     return {

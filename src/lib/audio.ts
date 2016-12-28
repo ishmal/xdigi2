@@ -24,7 +24,7 @@
 
 import {Digi} from './digi';
 import {Resampler} from './resample';
-import {RS7} from './rs7';
+import {Constants} from './constants';
 
 
 
@@ -56,6 +56,7 @@ interface AudioContext {
     createBuffer: (channels:number, frames:number, sampleRate: number) => any;
     createBufferSource: () => any;
     createBiquadFilter: () => any;
+    createAnalyser: () => any;
     destination: any;
     resume: () => void;
     suspend: () => void;
@@ -287,34 +288,39 @@ export class AudioInput {
         this.sampleRate = 8000;
         this.enabled = true;
     }
+
     receive(data: number[]) {
         this.par.receive(data);
     }
 
-		/**
-		 * Called to connect with the device and start processing.
-		 */
-		open(): boolean {
-			return true
-		}
+    getFftData(): Uint8Array {
+        return new Uint8Array(0);
+    }
 
-		/**
-		 * Called to disconnect from input device and cease operations
-		 */
-		close(): boolean {
-			return true;
-		}
+    /**
+     * Called to connect with the device and start processing.
+     */
+    open(): boolean {
+        return true
+    }
 
-		/**
-		 * Called to resume input processing
-		 */
+    /**
+     * Called to disconnect from input device and cease operations
+     */
+    close(): boolean {
+        return true;
+    }
+
+    /**
+     * Called to resume input processing
+     */
     start(): boolean {
         return true;
     }
 
-		/**
-		 * Called to pause input processing
-		 */
+    /**
+     * Called to pause input processing
+     */
     stop(): boolean {
         return true;
     }
@@ -345,30 +351,30 @@ export class AudioOutput {
         return this.par.transmit();
     }
 
-		/**
-		 * Called to connect with the device and start processing.
-		 */
-		open(): boolean {
-			return true
-		}
+    /**
+     * Called to connect with the device and start processing.
+     */
+    open(): boolean {
+        return true
+    }
 
-		/**
-		 * Called to disconnect from input device and cease operations
-		 */
-		close(): boolean {
-			return true;
-		}
+    /**
+     * Called to disconnect from input device and cease operations
+     */
+    close(): boolean {
+        return true;
+    }
 
-		/**
-		 * Called to resume output processing
-		 */
+    /**
+     * Called to resume output processing
+     */
     start(): boolean {
         return true;
     }
 
-		/**
-		 * Called to pause output processing
-		 */
+    /**
+     * Called to pause output processing
+     */
     stop(): boolean {
         return true;
     }
@@ -397,25 +403,36 @@ export class WebAudioInput extends AudioInput {
     source: MediaStreamAudioSourceNode;
     stream: MediaStream;
     inputNode: ScriptProcessorNode;
-		isRunning: boolean;
+	isRunning: boolean;
+    analyser: any;
 
     constructor(par: Digi) {
         super(par);
         this.par = par;
         this.actx = new AudioContext();
-        this.decimation = 7;
+        this.decimation = 8;
         this.sampleRate = this.actx.sampleRate / this.decimation;
         this.source = null;
         this.stream = null;
         this.inputNode = null;
         this.isRunning = false;
+        this.analyser = { // dummy until audio started
+            getByteFrequencyData: function(d: Uint8Array) {
+            }
+        };
+    }
+
+    getFftData(): Uint8Array {
+        let dataArray = new Uint8Array(Constants.BINS);
+        this.analyser.getByteFrequencyData(dataArray);
+        return dataArray;
     }
 
     setupSource() {
       let outBufSize = 1024;
       let outPtr = 0;
       let outCtr = 0;
-      let outBuf = new Array(outBufSize);
+      let outBuf = [];
       let bufferSize = 8192;
       //let decimator = Resampler.create(this.decimation);
       this.inputNode = this.actx.createScriptProcessor(bufferSize, 1, 1);
@@ -428,18 +445,22 @@ export class WebAudioInput extends AudioInput {
           //let d = decimator;
           for (let i = 0; i < len; i++) {
               outCtr++;
-              if (outCtr >= 7) {
+              if (outCtr >= 8) {
                 outBuf[outPtr++] = input[i];
                 outCtr = 0;
                 if (outPtr >= outBufSize) {
                   this.receive(outBuf)
+                  outBuf = [];
                   outPtr = 0;
                 }
               }
           }
       };
 
-      this.source.connect(this.inputNode);
+      this.analyser = this.actx.createAnalyser();
+      this.analyser.fftSize = Constants.FFT_SIZE * this.decimation;
+      this.source.connect(this.analyser);
+      this.analyser.connect(this.inputNode);
       this.inputNode.connect(this.actx.destination);
       this.isRunning = true;
     }
@@ -451,7 +472,6 @@ export class WebAudioInput extends AudioInput {
     }
 
     open(): boolean {
-        //try cordova plugin first
         if (navigator.getUserMedia) {
             navigator.getUserMedia(
                 { audio: true },
@@ -586,7 +606,7 @@ export class WebAudioOutput extends AudioOutput {
 
         let that = this;
         let bufferSize = 4096;
-        let decimation = 7;
+        let decimation = 8;
         let iptr = 0;
         let ibuf = [];
         let ilen = 0;
@@ -652,11 +672,7 @@ export class WebAudioOutput extends AudioOutput {
 export class AudioFactory {
 
     static getInput(par: Digi): AudioInput {
-        if (typeof window.audioinput !== 'undefined') {
-            return new CordovaAudioInput(par);
-        } else {
             return new WebAudioInput(par);
-        }
     }
 
     static getOutput(par: Digi): AudioOutput {
