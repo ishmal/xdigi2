@@ -201,7 +201,7 @@ function printTables() {
 
 
 export interface Timer {
-    update(r: number, i:number, f: (r:number, i:number) => void);
+    update(r: number, i: number, f: (r: number, i: number) => void);
 }
 
 function createEarlyLate(samplesPerSymbol): Timer {
@@ -211,7 +211,7 @@ function createEarlyLate(samplesPerSymbol): Timer {
     let bitclk = 0.0;
 
 
-    function update(r: number, i: number, f: (a:number, b:number) => void) {
+    function update(r: number, i: number, f: (a: number, b: number) => void) {
         let idx = Math.round(bitclk);
         let sum = 0.0;
         let ampsum = 0.0;
@@ -308,9 +308,9 @@ export class MfskMode extends Mode {
 
     }
 
-     getProperties(): Properties {
-         let that = this;
-         let cfg = {
+    getProperties(): Properties {
+        let that = this;
+        let cfg = {
             name: 'psk',
             description: 'phase-shift keying mode',
             tooltip: 'phase shift keying',
@@ -355,7 +355,7 @@ export class MfskMode extends Mode {
         this._ilp = Biquad.lowPass(v * 0.707, this.par.sampleRate);
         this._qlp = Biquad.lowPass(v * 0.707, this.par.sampleRate);
         this._symbollen = Math.round(this.samplesPerSymbol);
-        this._halfSym =  Math.round(this.samplesPerSymbol * 0.5);
+        this._halfSym = Math.round(this.samplesPerSymbol * 0.5);
         this._timer = createEarlyLate(this._symbollen);
         this.setupTransmit();
     }
@@ -369,7 +369,7 @@ export class MfskMode extends Mode {
         });
     }
 
- 
+
     scopeOut(i, q) {
         if (!(++this._ssctr & 1)) {
             return; // skip items
@@ -475,60 +475,60 @@ export class MfskMode extends Mode {
     // ###################
 
     createTransition() {
-      let sps = this.samplesPerSymbol;
-      let arr = new Array(sps);
-      let start = (sps * 0.333) | 0;
-      let end = (sps * 0.666) | 0;
-      for (let i=0 ; i < start ; i++) {
-        arr[i] = { r: 1, i: 0 };
-      }
-      let angle = 0;
-      let delta = Math.PI / (end - start);
-      for (let i=start ; i < end ; i++) {
-        arr[i] = { r: Math.cos(angle), i: 0 };
-      }
-      for (let i=end ; i < sps ; i++) {
-        arr[i] = { r: -1, i: 0 };
-      }
-      return arr;
+        let sps = this.samplesPerSymbol;
+        let arr = new Array(sps);
+        let start = (sps * 0.333) | 0;
+        let end = (sps * 0.666) | 0;
+        for (let i = 0; i < start; i++) {
+            arr[i] = { r: 1, i: 0 };
+        }
+        let angle = 0;
+        let delta = Math.PI / (end - start);
+        for (let i = start; i < end; i++) {
+            arr[i] = { r: Math.cos(angle), i: 0 };
+        }
+        for (let i = end; i < sps; i++) {
+            arr[i] = { r: -1, i: 0 };
+        }
+        return arr;
     }
 
     setupTransmit() {
-      let sps = Math.floor(this.samplesPerSymbol);
-      let txPhase = new Array(4);
-      for (let i = 0 ; i < 4 ; i++) {
-        txPhase[i] = new Array(sps);
-      }
-      for (let i = 0; i < sps ; i++) {
-        txPhase[0][i] = { r:  1.0, i:  0.0};
-        txPhase[1][i] = { r:  0.0, i:  1.0};
-        txPhase[2][i] = { r: -1.0, i:  0.0};
-        txPhase[3][i] = { r:  0.0, i: -1.0};
-      }
-      this._txPhase = txPhase;
+        let sps = Math.floor(this.samplesPerSymbol);
+        let txPhase = new Array(4);
+        for (let i = 0; i < 4; i++) {
+            txPhase[i] = new Array(sps);
+        }
+        for (let i = 0; i < sps; i++) {
+            txPhase[0][i] = { r: 1.0, i: 0.0 };
+            txPhase[1][i] = { r: 0.0, i: 1.0 };
+            txPhase[2][i] = { r: -1.0, i: 0.0 };
+            txPhase[3][i] = { r: 0.0, i: -1.0 };
+        }
+        this._txPhase = txPhase;
     }
 
     txStart(): Promise<boolean> {
-      return Promise.resolve(true);
+        return Promise.resolve(true);
     }
 
     txStop(): Promise<boolean> {
-      return Promise.resolve(true);
+        return Promise.resolve(true);
     }
 
     getTransmitText() {
-      let txt = "the quick brown fox jumped over the lazy dogs back";
-      let len = txt.length;
-      for (let i=0 ; i < len ; i++) {
-        let code = txt.charCodeAt(i);
-        let bits = encodeTable[i & 127];
-        let blen = bits.length;
-        for (let j = 0 ; j < blen ; j++) {
-          let b = bits[j];
-          let buf = (b) ? this._txPhase[0] : this._txPhase[1];
-          this._txQueue.push(buf);
+        let txt = "the quick brown fox jumped over the lazy dogs back";
+        let len = txt.length;
+        for (let i = 0; i < len; i++) {
+            let code = txt.charCodeAt(i);
+            let bits = encodeTable[i & 127];
+            let blen = bits.length;
+            for (let j = 0; j < blen; j++) {
+                let b = bits[j];
+                let buf = (b) ? this._txPhase[0] : this._txPhase[1];
+                this._txQueue.push(buf);
+            }
         }
-      }
     }
 
 
@@ -536,9 +536,9 @@ export class MfskMode extends Mode {
         let q = this._txQueue;
         this.getTransmitText();
         if (q.length) {
-          return q.shift();
+            return q.shift();
         } else {
-          return this._txPhase[0];
+            return this._txPhase[0];
         }
     }
 
