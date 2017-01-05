@@ -116,6 +116,14 @@ export default {
     }
   },
 
+  methods: {
+    exitApp: function() {
+      if (navigator.app) {
+        navigator.app.exitApp();
+      }
+    }
+  },
+
   computed: {
     runningClass: function() {
       let isOn = digi.isRunning;
