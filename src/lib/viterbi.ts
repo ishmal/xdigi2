@@ -34,8 +34,9 @@ export class Viterbi {
     _poly2: number;
     output: number[];
     metrics: number[][];
+    metric: number;
     history: number[][];
-    mettab: number[];
+    mettab: number[][];
     sequence: number[];
     ptr: number;
 
@@ -54,16 +55,12 @@ export class Viterbi {
             this.metrics[i] = new Array(this.nstates).fill(0);
             this.history[i] = new Array(this.nstates).fill(0);
         }
-
+        this.metric = 0;
         this.init();
     }
 
-
-
     init() {
-
         let mettab = this.mettab;
-
         this._traceback = this._k * 12; // takes >= 12 constraint lengths to calculate from an arbitrary state, when punctured
         this._chunksize = 8;
 
@@ -71,6 +68,8 @@ export class Viterbi {
             this.output[i] = parity(this._poly1 & i) | (parity(this._poly2 & i) << 1);
         }
 
+        mettab[0] = [];
+        mettab[1] = [];
         for (let i = 0; i < 256; i++) {
             mettab[0][i] = 128 - i;
             mettab[1][i] = i - 128;
@@ -150,7 +149,7 @@ export class Viterbi {
         return c;
     }
 
-    decode(sym: string, metric: number) {
+    decode(sym: string) {
 
         let currptr = this.ptr;
         let prevptr = (currptr - 1) % PATHMEM;
@@ -191,7 +190,7 @@ export class Viterbi {
         this.ptr = (this.ptr + 1) % PATHMEM;
 
         if ((this.ptr % this._chunksize) == 0)
-            return this.traceback(metric);
+            return this.traceback(this.metrics);
 
         let INT_MIN = Math.round(Number.MIN_SAFE_INTEGER)
         if (this.metrics[currptr][0] > Number.MAX_SAFE_INTEGER / 2) {
