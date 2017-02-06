@@ -190,7 +190,7 @@ export class Viterbi {
         this.ptr = (this.ptr + 1) % PATHMEM;
 
         if ((this.ptr % this._chunksize) == 0)
-            return this.traceback(this.metrics);
+            return this.traceback(this.metrics[currptr][0]);
 
         let INT_MIN = Math.round(Number.MIN_SAFE_INTEGER)
         if (this.metrics[currptr][0] > Number.MAX_SAFE_INTEGER / 2) {
