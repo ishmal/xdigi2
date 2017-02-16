@@ -54,6 +54,19 @@ gulp.task("serve", function(callback) {
     });
 });
 
+let KarmaServer = require('karma').Server;
+
+/**
+ * Run test once and exit
+ */
+gulp.task('test', function (done) {
+  new KarmaServer({
+    configFile: __dirname + '/karma.conf.js',
+    singleRun: false
+  }, done).start();
+});
+
+
 gulp.task('build', ['copy', 'webpack']);
 
 gulp.task('default', ['build']);

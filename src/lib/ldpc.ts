@@ -3,7 +3,7 @@
 const codes = {
     "648": {
         z: 27,
-        len: 648,
+        length: 648,
         rates: {
             "1/2": {
                 source: [
@@ -171,79 +171,97 @@ export class Ldpc {
 
     generateTables() {
         Object.keys(codes).forEach(k => {
-          let code = codes[k];
-          Object.keys(code.rates).forEach(r => {
-            this.generateH(r, code.z);
-            this.generateZ(r, code.z);
-          });
+            let code = codes[k];
+            Object.keys(code.rates).forEach(k2 => {
+                let rate = code.rates[k2];
+                this.generateZ(code, rate);
+            });
         });
     }
 
-    parseSourceToInts(source) {
-      let arr = [];
-      let src = source.trim();
-      let nrRows = src.length;
-      for (let i = 0 ; i < len ; i++) {
-        let row = [];
-      }
-    }
-
-    generateH(rate, z) {
+    generateZ(code, rate) {
+        let z = code.z;
         let arr = [];
         let qtable = rate.source;
         let qcRows = qtable.length;
-        let yoff = 0;
         for (let i = 0; i < qcRows; i++) {
-            let xoff = 0;
+            let row = [];
             let str = qtable[i].trim();
-            let vals = str.split(' ');
-            for (let j = 0; j < z; j++) {
+            let vals = str.split(/\s+/);
+            let vlen = vals.length;
+            for (let j = 0; j < vlen; j++) {
                 let val = vals[j];
-                if (val !== '-') {
+                if (val === '-') {
+                    row.push(-1);
+                } else {
                     let shift = parseInt(val, 10);
-                    let x0 = shift;
-                    let y = yoff;
-                    for (let k = 0; k < z; k++) {
-                        let x = x0 + xoff;
-                        arr[x][y] = true;
-                        x0 = (x0 + 1) % z;
-                        y++;
-                    }
+                    row.push(shift);
                 }
-                xoff += z;
             }
-            yoff += z;
         }
-        rate.H = arr;
+        rate.Z = arr;
     }
 
-    generateZ(rate, z) {
-      let arr = [];
-      let qtable = rate.source;
-      let qcRows = qtable.length;
-      for (let i = 0; i < qcRows; i++) {
-          let row = [];
-          let str = qtable[i].trim();
-          let vals = str.split(' ');
-          for (let j = 0; j < z; j++) {
-              let val = vals[j];
-              if (val === '-') {
-                row.push(new Array(z).fill(0));
-              } else {
-                  let shift = parseInt(val, 10);
-                  let block = [];
-                  for (let k = 0; k < z; k++) {
-                      block[k] = (k === shift) ? 1 : 0;
-                  }
-                row.push(block);
-              }
-          }
-      }
-      rate.Z = arr;
+    strToBytes(str) {
+        let bytes = [];
+        let len = str.length;
+
+        for (let i = 0; i < len; i++) {
+            let charCode = str.charCodeAt(i);
+            bytes.push((charCode & 0xFF00) >> 8);
+            bytes.push(charCode & 0xFF);
+        }
+        return bytes;
     }
 
-    encode(str) {
+    bytesToBits(bytes) {
+        let bits = [];
+        let len = bytes.length;
+        for (let i = 0; i < len; i++) {
+            let b = bytes[i];
+            bits.push((b >> 7) & 1);
+            bits.push((b >> 6) & 1);
+            bits.push((b >> 5) & 1);
+            bits.push((b >> 4) & 1);
+            bits.push((b >> 3) & 1);
+            bits.push((b >> 2) & 1);
+            bits.push((b >> 1) & 1);
+            bits.push((b) & 1);
+        }
 
+        return bits;
+    }
+
+    padBitsTo(inbits, size) {
+        let bits = inbits.slice(0);
+        let len = bits.length;
+        let pad = size - len;
+        for (let i = 0; i < pad; i++) {
+            bits.push(0);
+        }
+        return bits;
+    }
+
+    breakBitsIntoZ(bits, z) {
+        let zarr = [];
+        let len = bits.length;
+        let start = 0, end = z;
+        while (start < len) {
+            let chunk = bits.slice(start, end);
+            zarr.push(chunk);
+            start = end;
+            end += z;
+        }
+        return zarr;
+    }
+
+    encode(str: string, lenStr: string, rateStr: string) {
+        let code = codes[lenStr];
+        let rate = code.rates[rateStr];
+        let bytes = this.strToBytes(str);
+        let bits = this.bytesToBits(bytes);
+        let pbits = this.padBitsTo(bits, code.len);
+        let zbits = this.breakBitsIntoZ(pbits, code.z);
     }
 
 }
