@@ -1,4 +1,4 @@
-
+import {Crc32} from './crc32';
 
 const codes = {
     "648": {
@@ -198,6 +198,7 @@ export class Ldpc {
                     row.push(shift);
                 }
             }
+            arr.push(row);
         }
         rate.Z = arr;
     }
@@ -214,6 +215,17 @@ export class Ldpc {
         return bytes;
     }
 
+    wrapBytes(bytes) {
+      let crc = new Crc32();
+      let len = bytes.length + 8;
+      let lenBytes = crc.intToBytes(len);
+      let bytes2 = lenBytes.concat(bytes);
+      let checksum = crc.ofBytes(bytes2);
+      let checksumBytes = crc.intToBytes(checksum);
+      let obytes = bytes2.concat(checksumBytes);
+      return obytes;
+    }
+
     bytesToBits(bytes) {
         let bits = [];
         let len = bytes.length;
@@ -228,7 +240,6 @@ export class Ldpc {
             bits.push((b >> 1) & 1);
             bits.push((b) & 1);
         }
-
         return bits;
     }
 
@@ -258,10 +269,32 @@ export class Ldpc {
     encode(str: string, lenStr: string, rateStr: string) {
         let code = codes[lenStr];
         let rate = code.rates[rateStr];
+        let z = code.z;
         let bytes = this.strToBytes(str);
         let bits = this.bytesToBits(bytes);
-        let pbits = this.padBitsTo(bits, code.len);
+        let pbits = this.padBitsTo(bits, code.length);
         let zbits = this.breakBitsIntoZ(pbits, code.z);
+        let Hb = rate.Z;
+        let mb = zbits.length;  //message length in z-blocks
+        let nb = Hb[0].length;  // matrix width in z-blocks
+        let kb = nb - mb;
+        let sum = 0;
+        for (let i = 0 ; i < mb ; i++) {
+          let colsum = 0;
+          for (let j = 0 ; j < kb ; j++) {
+            let hij = Hb[i][j];
+            if (hij >= 0) {
+              let mz = zbits[j];
+              let zsum = 0;
+              for (let k = 0 ; k < z ; k++) {
+                zsum += hij * mz[k];
+              }
+              colsum += zsum;
+            }
+          }
+          sum += colsum;
+        }
+        let p0 = sum;
     }
 
 }
