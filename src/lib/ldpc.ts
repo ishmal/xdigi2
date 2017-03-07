@@ -253,7 +253,7 @@ export class Ldpc {
         return bits;
     }
 
-    breakBitsIntoZ(bits, z) {
+    bitsToZ(bits, z) {
         let zarr = [];
         let len = bits.length;
         let start = 0, end = z;
@@ -266,6 +266,48 @@ export class Ldpc {
         return zarr;
     }
 
+    zToBits(z) {
+        let bits = [];
+        let len = z.length;
+        for (let i = 0 ; i < len ; i++) {
+          bits = bits.concat(z[i]);
+        }
+        return bits;
+    }
+
+    arrayRotate(arr, n) {
+      return arr.slice(n, arr.length).concat(arr.slice(0, n));
+    }
+
+    arrayAdd(a, b) {
+      let len = a.length;
+      let arr = new Array(len);
+      for (let i = 0 ; i < len ; i++) {
+        arr[i] = a[i] + b[i];
+      }
+      return arr;
+    }
+
+    arrayNew(size) {
+      let a = new Array(size);
+      a.fill(0)
+      return a;
+    }
+
+    lambdaI(Hb, zbits, z, kb, i) {
+      let p = this.arrayNew(z);
+      for (let j = 0 ; j < kb ; j++) {
+        let hij = Hb[i][j];
+        if (hij >= 0) {
+          let mz = zbits[j];
+          for (let k = 0 ; k < z ; k++) {
+            p = this.arrayAdd(p, this.arrayRotate(mz, hij));
+          }
+        }
+      }
+      return p;
+    }
+
     encode(str: string, lenStr: string, rateStr: string) {
         let code = codes[lenStr];
         let rate = code.rates[rateStr];
@@ -273,28 +315,26 @@ export class Ldpc {
         let bytes = this.strToBytes(str);
         let bits = this.bytesToBits(bytes);
         let pbits = this.padBitsTo(bits, code.length);
-        let zbits = this.breakBitsIntoZ(pbits, code.z);
+        let zbits = this.bitsToZ(pbits, code.z);
+        let zbitsOut = zbits.slice(0);
         let Hb = rate.Z;
         let mb = zbits.length;  //message length in z-blocks
+        let nrParityZ = (code.length - mb * z) / z;
         let nb = Hb[0].length;  // matrix width in z-blocks
         let kb = nb - mb;
-        let sum = 0;
+        let p0 = this.arrayNew(z);
         for (let i = 0 ; i < mb ; i++) {
-          let colsum = 0;
-          for (let j = 0 ; j < kb ; j++) {
-            let hij = Hb[i][j];
-            if (hij >= 0) {
-              let mz = zbits[j];
-              let zsum = 0;
-              for (let k = 0 ; k < z ; k++) {
-                zsum += hij * mz[k];
-              }
-              colsum += zsum;
-            }
-          }
-          sum += colsum;
+          let p = this.lambdaI(Hb, zbits, z, kb, i);
+          p0 = this.arrayAdd(p0, p);
         }
-        let p0 = sum;
+        zbitsOut.push(p0);
+        for (let i = 1; i < nrParityZ ; i++) {
+          let p = this.lambdaI(Hb, zbits, z, kb, i - 1);
+          let nextp = this.arrayAdd(p, this.arrayRotate(p0, 1));
+          zbitsOut.push(nextp);
+        }
+        let outbits = this.zToBits(zbitsOut);
+        return outbits;
     }
 
 }
