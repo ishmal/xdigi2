@@ -288,6 +288,15 @@ export class Ldpc {
       return arr;
     }
 
+    arrayXor(a, b) {
+      let len = a.length;
+      let arr = new Array(len);
+      for (let i = 0 ; i < len ; i++) {
+        arr[i] = a[i] ^ b[i];
+      }
+      return arr;
+    }
+
     arrayNew(size) {
       let a = new Array(size);
       a.fill(0)
@@ -301,7 +310,7 @@ export class Ldpc {
         if (hij >= 0) {
           let mz = zbits[j];
           for (let k = 0 ; k < z ; k++) {
-            p = this.arrayAdd(p, this.arrayRotate(mz, hij));
+            p = this.arrayXor(p, this.arrayRotate(mz, hij));
           }
         }
       }
