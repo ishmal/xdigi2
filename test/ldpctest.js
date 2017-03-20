@@ -1,5 +1,5 @@
 
-import {Ldpc} from "../lib/ldpc";
+import {Ldpc} from "../src/lib/ldpc";
 
 describe("LDPC tests", function(){
 

@@ -1,4 +1,4 @@
-import {Crc32} from "../lib/crc32";
+import {Crc32} from "../src/lib/crc32";
 
 describe("CRC tests", function(){
 

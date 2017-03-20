@@ -5,7 +5,13 @@ const gutil = require("gulp-util");
 const webpack = require("webpack");
 const WebpackDevServer = require("webpack-dev-server");
 const jshint = require('gulp-jshint');
+const mocha = require('gulp-mocha');
 
+gulp.task('default', () =>
+    gulp.src('test.js', {read: false})
+        // `gulp-mocha` needs filepaths so you can't have any plugins before it
+        .pipe(mocha({reporter: 'nyan'}))
+);
 
 gulp.task('copy', function() {
 	gulp.src([
@@ -75,13 +81,21 @@ let KarmaServer = require('karma').Server;
 /**
  * Run test once and exit
  */
-gulp.task('test', function(done) {
+gulp.task('karma-test', function(done) {
 	new KarmaServer({
 		configFile: __dirname + '/karma.conf.js',
 		singleRun: false
 	}, done).start();
 });
 
+gulp.task('test', () => {
+	let opts = {
+		reporter: 'nyan'
+	};
+	gulp.src('./src/test/*.js', {read: false})
+      .pipe(mocha(opts));
+	}
+);
 
 gulp.task('build', ['copy', 'webpack']);
 

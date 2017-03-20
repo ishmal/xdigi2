@@ -1,14 +1,22 @@
 module.exports = function(config) {
-    config.set({
-        frameworks: ["jasmine", "karma-typescript"],
-        files: [
-          { pattern: "src/**/*.ts" }, // *.tsx for React Jsx
-        ],
-        preprocessors: {
-          "src/**/*.ts": ["karma-typescript"], // *.tsx for React Jsx
-        },
-        reporters: ["progress", "karma-typescript"],
-        browsers: ["Chrome"],
-        singleRun: true
-    });
+	config.set({
+		frameworks: ['jasmine', 'browserify'],
+    files: [
+            'test/**/*.js'
+    ],
+		preprocessors: {
+			'src/**/*.js': ['browserify'],
+      'test/**/*.js': ['browserify']
+		},
+    browserify: {
+      debug: true,
+      transform: [['babelify', { presets: ['es2015']} ]]
+    },
+    babelify: {
+      presets: ['es2015']
+    },
+		reporters: ["progress"],
+		browsers: ["Chrome"],
+		singleRun: true
+	});
 };

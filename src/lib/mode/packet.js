@@ -19,7 +19,7 @@
 /* jslint node: true */
 
 import {FskBase} from './fsk';
-import {Biquad, FIR} from '../filter';
+import {Biquad, FIR} from './../filter';
 import {Properties} from './mode';
 
 /**
