@@ -6,18 +6,22 @@
 
 import {Digi, Terminal} from './lib/digi';
 
-function setupTerminal(digi: Digi, txt: HTMLTextAreaElement) {
+/**
+ * @param digi instance of parent {Digi}
+ * @param txt {HTMLTextAreaElement}
+ */
+function setupTerminal(digi, txt) {
 
   let textWidget = {
       clear : () => {
         txt.value = "";
       },
-      putText : (str: string) => {
+      putText : (str) => {
         let s = txt.value
         txt.value = s + str;
         txt.scrollTop = txt.scrollHeight;
       },
-      getText : ():string => {
+      getText : () => {
         return txt.value
       }
   };

@@ -6,12 +6,16 @@
 
 import {Digi, OutText} from './lib/digi';
 
-function setupStatus(digi: Digi, txt: HTMLTextAreaElement) {
+/**
+ * @param digi instance of parent {Digi}
+ * @param txt {HTMLTextAreaElement}
+ */
+function setupStatus(digi, txt) {
   let textWidget = {
       clear : () => {
         txt.value = "";
       },
-      putText : (str: string) => {
+      putText : (str) => {
         let s = txt.value
         txt.value = s + str;
         txt.scrollTop = txt.scrollHeight;

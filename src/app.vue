@@ -47,7 +47,6 @@
 
 import {Digi} from './lib/digi';
 import {AudioFactory} from './lib/audio';
-declare var require: any;
 const tuner = require('./tuner.vue').default;
 const status = require('./status.vue').default;
 const outtext = require('./outtext.vue').default;

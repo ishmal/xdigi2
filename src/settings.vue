@@ -25,11 +25,6 @@
 
 <script>
 
-interface Navigator {
-  app: any;
-}
-declare var navigator: Navigator;
-
 import {OutText} from './lib/digi';
 
 export default {

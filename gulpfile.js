@@ -23,8 +23,7 @@ gulp.task('copy', function() {
 gulp.task('clean', function(done) {
 	let files = [
 		'www/*',
-		'src/**/*.d.ts',
-		'src/**/*.js'
+		'src/**/*.d.ts'
 	];
 	del(files, function() {
 		done();
