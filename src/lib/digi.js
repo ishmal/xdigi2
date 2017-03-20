@@ -26,7 +26,7 @@ import {RttyMode} from './mode/rtty';
 import {PacketMode} from './mode/packet';
 import {NavtexMode} from './mode/navtex';
 import {Watcher} from './watch';
-import {Tuner, TunerImpl, TunerDummy} from './tuner';
+import {Tuner, TunerBase} from './tuner';
 
 
 /**
@@ -140,7 +140,7 @@ export class Digi {
           this.navtexMode
         ];
 
-        this.tuner = (canvas) ? new TunerImpl(this, canvas) : new TunerDummy();
+        this.tuner = (canvas) ? new Tuner(this, canvas) : new TunerBase();
         this.terminal = {
           clear: () => { },
           putText: (string) => { },

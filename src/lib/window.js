@@ -111,5 +111,3 @@ export class Window {
         return xs;
     }
 }
-
-export {Window};

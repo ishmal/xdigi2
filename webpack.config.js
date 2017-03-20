@@ -3,7 +3,7 @@ const webpack = require("webpack");
 module.exports = {
 	entry: {
 		app: './src/app.js',
-		vendor: ['vue', 'bootstrap', 'tether', 'jquery']
+		vendor: ['vue', 'tether', 'bootstrap', 'jquery']
 	},
 	output: {
 		filename: 'app.bundle.js',
@@ -14,22 +14,33 @@ module.exports = {
 		extensions: ['', '.webpack.js', '.web.js', '.js', '.vue'],
 	},
 	module: {
-		loaders: [
-			{
+		loaders: [{
 				test: /\.vue$/,
 				loader: 'vue'
+			},
+			{
+				test: /.js$/,
+				loader: 'babel-loader',
+				query: {
+					presets: ['es2015']
+				}
 			}
 		]
+	},
+	vue: {
+		loaders: {
+			js: 'babel?presets[]=es2015'
+		}
 	},
 	devtool: "source-map",
 	plugins: [
 		new webpack.optimize.CommonsChunkPlugin( /* chunkName= */ "vendor", /* filename= */
 			"vendor.bundle.js"),
 		new webpack.ProvidePlugin({
-      "window.Tether": 'tether',
 			$: "jquery",
 			jQuery: "jquery",
-			"window.jQuery": "jquery"
+			"window.jQuery": "jquery",
+			"Tether": 'tether'
 		})
 	]
 }

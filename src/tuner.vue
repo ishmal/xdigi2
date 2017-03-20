@@ -14,13 +14,13 @@
 
 <script>
 
-import {TunerImpl} from './lib/tuner';
+import {Tuner} from './lib/tuner';
 
 export default {
   props: ['digi'],
   mounted: function() {
     let elem = this.$el.children[0];
-    let tuner = new TunerImpl(this.digi, elem);
+    let tuner = new Tuner(this.digi, elem);
     this.digi.tuner = tuner;
   },
   methods: {

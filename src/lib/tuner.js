@@ -122,7 +122,7 @@ export class Tuner extends TunerBase {
           window.msRequestAnimationFrame;
         //  || window.mozRequestAnimationFrame
         //  || window.webkitRequestAnimationFrame;
-
+        super();
         this._par = par;
         this._canvas = canvas;
         this._MAX_FREQ = par.sampleRate * 0.5;
