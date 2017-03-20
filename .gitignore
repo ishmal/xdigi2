@@ -5,5 +5,4 @@ plugins/*
 
 src/**/*.d.ts
 src/**/*.map
-src/**/*.js
 coverage/*

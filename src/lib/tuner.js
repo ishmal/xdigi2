@@ -35,50 +35,54 @@ function error(msg) {
 }
 
 
-interface Point {
-    x: number;
-    y: number;
-}
-
 class Draggable {
-    pos0: Point;
 
-    constructor(pos0: Point) {
+    /**
+    pos0: Point;
+    */
+
+    /**
+     * @param p {Point}
+     */
+    constructor(p) {
         this.pos0 = pos0;
     }
 
-    drag(p: Point) {
+    /**
+     * @param p {Point}
+     */
+    drag(p) {
     }
 
-    end(p: Point) {
+    /**
+     * @param p {Point}
+     */
+    end(p) {
     }
 }
 
-export interface Tuner {
-    frequency: number;
-    showScope(data: number): void;
-    update(data: Uint8Array): void;
-}
+export class TunerBase {
 
-export class TunerDummy implements Tuner {
     constructor() {
     }
 
-    get frequency(): number { return 0; }
+    /**
+     * @return {number}
+     */
+    get frequency() { return 0; }
 
-    showScope(data: number): void { }
+    /**
+     * @param data {number}
+     */
+    showScope(data) { }
 
-    update(data: Uint8Array): void { }
+    /**
+     * @param data {Uint8Array}
+     */
+    update(data) { }
 }
 
-//add some things to the api
-interface Window {
-    msRequestAnimationFrame: any;
-    requestAnimationFrame: any;
-    addEventListener: any;
-};
 
-declare var window: Window;
 
 
 /**
@@ -86,8 +90,9 @@ declare var window: Window;
  * @param par the parent Digi of this waterfall
  * @canvas the canvas to use for drawing
  */
-export class TunerImpl implements Tuner {
+export class Tuner extends TunerBase {
 
+    /**
     _par: Digi;
     _canvas: HTMLCanvasElement;
     _MAX_FREQ: number;
@@ -105,8 +110,13 @@ export class TunerImpl implements Tuner {
     _scopeData: number[];
     _palette: number[];
     _tuningRate: number;
+    */
 
-    constructor(par: Digi, canvas: HTMLCanvasElement) {
+    /**
+     * @param par parent instance of a Digi api
+     * @param canvas {HTMLCanvasElement}
+     */
+    constructor(par, canvas) {
 
         window.requestAnimationFrame = window.requestAnimationFrame
             || window.msRequestAnimationFrame;
@@ -128,7 +138,7 @@ export class TunerImpl implements Tuner {
         this._rowsize = null;
         this._lastRow = null;
         this._scopeData = [];
-        this._tuningRate = 1.0;
+        this.tuningRate = 1.0;
 
         this.setupBitmap();
 
@@ -149,15 +159,12 @@ export class TunerImpl implements Tuner {
         return this._frequency;
     }
 
-    set tuningRate(rate: number) {
-        this._tuningRate = rate;
-    }
-
-    get tuningRate(): number {
-        return this._tuningRate;
-    }
-
-    createIndices(targetsize: number, sourcesize: number): number[] {
+    /**
+     * @param targetsize {number}
+     * @param sourcesize {number}
+     * @return {number[]}
+     */
+    createIndices(targetsize, sourcesize) {
         let xs = new Array(targetsize);
         let ratio = sourcesize / targetsize;
         for (let i = 0; i < targetsize; i++) {
@@ -167,7 +174,7 @@ export class TunerImpl implements Tuner {
     }
 
 
-    setupBitmap(): void {
+    setupBitmap() {
         let canvas = this._canvas;
         this._width = canvas.width;
         this._height = canvas.height;
@@ -258,7 +265,7 @@ export class TunerImpl implements Tuner {
                 let pos = getMousePos(canvas, event);
                 d.drag(pos);
             }
-            event.preventDefault();            
+            event.preventDefault();
         }
 
         canvas.onclick = onClick;
@@ -299,8 +306,9 @@ export class TunerImpl implements Tuner {
     /**
      * Make a palette. tweak this often
      * TODO:  consider using an HSV heat map
+     * @return {number[]}
      */
-    makePalette(): number[] {
+    makePalette() {
         let xs = [];
         for (let i = 0; i < 256; i++) {
             let r = (i < 170) ? 0 : (i - 170) * 3;
@@ -312,7 +320,11 @@ export class TunerImpl implements Tuner {
         return xs;
     }
 
-    makePalette2() : number[] {
+    /**
+     * Alternate palette
+     * @return {number[]}
+     */
+    makePalette2() {
         let size = 65536;
         let xs = [];
         let range1 = {
@@ -358,7 +370,7 @@ export class TunerImpl implements Tuner {
 
          return xs;
     }
-        
+
 
     drawSpectrum(data) {
         let width = this._width;
@@ -541,7 +553,10 @@ export class TunerImpl implements Tuner {
         ctx.restore();
     }
 
-    updateData(data: Uint8Array) {
+    /**
+     * @param data {Uint8Array}
+     */
+    updateData(data) {
         this.drawWaterfall(data);
         //this.drawSpectrum(data);
         this.drawTuner();
@@ -552,7 +567,10 @@ export class TunerImpl implements Tuner {
         this._scopeData = data;
     }
 
-    update(data: Uint8Array) {
+    /**
+     * @param data {Uint8Array}
+     */
+    update(data) {
         requestAnimationFrame(() => {
             this.updateData(data);
         });

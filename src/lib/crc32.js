@@ -4,7 +4,9 @@
  */
 export class Crc32 {
 
+    /**
     crcTable: number[];
+    */
 
     constructor() {
         let crcTable = [];

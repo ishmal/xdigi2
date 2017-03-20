@@ -4,8 +4,10 @@ const PATHMEM = 256;
 
 /*
  * Hamming weight (number of bits that are ones).
+ * @param w {number}
+ * @return number
  */
-function hweight32(w: number): number {
+function hweight32(w) {
     w = (w & 0x55555555) + ((w >> 1) & 0x55555555);
     w = (w & 0x33333333) + ((w >> 2) & 0x33333333);
     w = (w & 0x0F0F0F0F) + ((w >> 4) & 0x0F0F0F0F);
@@ -18,13 +20,18 @@ function hweight32(w: number): number {
  * Parity function. Return one if `w' has odd number of ones, zero otherwise.
  */
 
-function parity(w: number): number {
+/**
+ * @param parity {number}
+ * @return number
+ */
+function parity(w) {
     return hweight32(w) & 1;
 }
 
 
 export class Viterbi {
 
+    /**
     outsize: number;
     nstates: number;
     _k: number;
@@ -39,9 +46,14 @@ export class Viterbi {
     mettab: number[][];
     sequence: number[];
     ptr: number;
+    */
 
-
-    constructor(k: number, poly1: number, poly2: number) {
+    /**
+    * @param k {number}
+    * @param poly1 {number}
+    * @param poly2 {number}
+     */
+    constructor(k, poly1, poly2) {
         this.outsize = 1 << k;
         this.nstates = 1 << (k - 1);
         this._k = k;
@@ -88,24 +100,32 @@ export class Viterbi {
         this.ptr = 0;
     }
 
-    settraceback(trace: number) {
+    /**
+     * @param trace {number}
+     */
+    settraceback(trace) {
         if (trace < 0 || trace > PATHMEM - 1)
             return -1;
         this._traceback = trace;
         return 0;
     }
 
-    setchunksize(chunk: number) {
+    /**
+     * @param chunk {number}
+     */
+    setchunksize(chunk) {
         if (chunk < 1 || chunk > this._traceback)
             return -1;
         this._chunksize = chunk;
         return 0;
     }
 
-    traceback(metric: number): number {
-
+    /**
+     * @param metric {number}
+     * @return number
+     */
+    traceback(metric) {
         let c = 0;
-
         let p = (this.ptr - 1) % PATHMEM;
 
         // Find the state with the best metric
@@ -149,7 +169,10 @@ export class Viterbi {
         return c;
     }
 
-    decode(sym: string) {
+    /**
+     * @param sym {string}
+     */
+    decode(sym) {
 
         let currptr = this.ptr;
         let prevptr = (currptr - 1) % PATHMEM;
@@ -214,14 +237,21 @@ export class Viterbi {
 
 export class Encoder {
 
+    /**
     output: number[];
     _k: number;
     _poly1: number;
     _poly2: number;
     shreg: number;
     shregmask: number;
+    */
 
-    constructor(k: number, poly1: number, poly2: number) {
+    /**
+    * @param k {number}
+    * @param poly1 {number}
+    * @param poly2 {number}
+     */
+    constructor(k, poly1, poly2) {
         let size = 1 << k;	/* size of the output table */
         this.output = new Array(size);
         this._k = k;
@@ -230,8 +260,11 @@ export class Encoder {
         this.init();
     }
 
-
-    encode(bit: number): number {
+    /**
+     * @param bit {number}
+     * @return number
+     */
+    encode(bit) {
         this.shreg = (this.shreg << 1) | bit;
         return this.output[this.shreg & this.shregmask];
     }
@@ -240,11 +273,11 @@ export class Encoder {
         let size = 1 << this._k;	/* size of the output table */
 
         /**
-               * output contains 2 bits in positions 0 and 1 describing the state machine
-               * for each bit delay, ie: for k = 7 there are 128 possible state pairs.
-               * the modulo-2 addition for polynomial 1 is in bit 0
-               * the modulo-2 addition for polynomial 2 is in bit 1
-               * the allowable state outputs are 0, 1, 2 and 3
+         * output contains 2 bits in positions 0 and 1 describing the state machine
+         * for each bit delay, ie: for k = 7 there are 128 possible state pairs.
+         * the modulo-2 addition for polynomial 1 is in bit 0
+         * the modulo-2 addition for polynomial 2 is in bit 1
+         * the allowable state outputs are 0, 1, 2 and 3
          */
         for (let i = 0; i < size; i++) {
             this.output[i] = parity(this._poly1 & i) | (parity(this._poly2 & i) << 1);
