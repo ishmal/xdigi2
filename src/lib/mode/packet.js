@@ -102,7 +102,9 @@ const CrcTables = {
 
 class Crc {
 
+    /**
     _crc: number;
+    */
 
     constructor() {
         this.reset();
@@ -137,11 +139,17 @@ class Crc {
 
 class PacketAddr {
 
+    /**
     _call: string;
     _ssid: number;
     _add: string;
+    */
 
-    constructor(call: string, ssid: number) {
+    /**
+     * @param call {string}
+     * @param ssid {string}
+     */
+    constructor(call, ssid) {
         this._call = call;
         this._ssid = ssid;
         this._add = null;

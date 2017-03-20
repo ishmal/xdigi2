@@ -215,7 +215,7 @@ function createEarlyLate(samplesPerSymbol) {
     let buf = new Float32Array(size);
     let bitclk = 0.0;
 
-    function update(r, i, f: (a, b) => void) {
+    function update(r, i, f) {
         let idx = Math.round(bitclk);
         let sum = 0.0;
         let ampsum = 0.0;

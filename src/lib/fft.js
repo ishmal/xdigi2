@@ -20,11 +20,13 @@
 import {Complex, ComplexOps} from './complex';
 import {Window} from './window';
 
-
+/**
 export interface FFT {
   powerSpectrum(data: number[], ps: number[]);
   powerSpectrumStream(data: number[], callback: (data: number[]) => any);
 }
+*/
+
 
 /**
  * Perform a relatively-efficient FFT
@@ -147,8 +149,11 @@ function FFT(N) {
 
 /**
  * Perform a very efficient FFT.  Split Radix!
+ * @param N {number}
+ * @param window {number}
+ * @return {FFT}
  */
-export function FFTSR(N: number, window: number) : FFT {
+export function FFTSR(N, window) {
 
     let power = (Math.log(N) / Math.LN2) | 0;
     let N2 = N >> 1;
@@ -363,8 +368,11 @@ export function FFTSR(N: number, window: number) : FFT {
         computePowerSpectrum(ps);
     }
 
-    function powerSpectrumStream2(data: number[], 
-        cb: (ps: number[]) => any) {
+    /**
+     * @param data {number[]}
+     * @param cb {(ps: number[]) => any)}
+     */
+    function powerSpectrumStream2(data, cb) {
       let dataIdx = 0;
       let dataLen = data.length;
       while (dataIdx < dataLen) {
@@ -383,7 +391,11 @@ export function FFTSR(N: number, window: number) : FFT {
       }
     }
 
-    function powerSpectrumStream(data: number[], cb: (ps: number[]) => any) {
+    /**
+     * @param data {number[]}
+     * @param cb {(ps: number[]) => any)}
+     */
+    function powerSpectrumStream(data, cb) {
       let top = N - 1;
       let dataLen = data.length;
       for (let i=0 ; i < dataLen ; i++) {

@@ -58,23 +58,26 @@ export class Resampler {
 /**
  * ### decimation : 1
  */
-export class Resampler1 extends Resampler {
+function resampler1() {
 
-    function dec(v) {
+    let r = new Resampler();
+
+    r.decimate = function(v) {
         return v;
-    }
+    };
 
-    function decx(vr, vi) {
+    r.decimatex = function(vr, vi) {
         return { r: vr, i: vi };
-    }
+    };
 
-    function int(v, buf) {
+    r.interpolate = function(v, buf) {
         buf[0] = v;
     };
 
-    function intx(vr, vi, buf) {
+    r.interpolatex = function(vr, vi, buf) {
         buf[0] = { r: vr, i: vi };
-    }
+    };
+    return r;
 
 }
 
@@ -84,7 +87,10 @@ export class Resampler1 extends Resampler {
 /**
  * ### decimation : 2
  */
-function Resampler2(): Resampler {
+function resampler2() {
+
+  let r = new Resampler();
+
     let idx = 0;
     let r0 = 0;
     let i0 = 0;
@@ -96,7 +102,7 @@ function Resampler2(): Resampler {
     let i3 = 0;
 
 
-    function dec(v: number): number {
+  r.decimate = function(v) {
         r0 = r1;
         r1 = r2;
         r2 = r3;
@@ -107,9 +113,9 @@ function Resampler2(): Resampler {
         } else {
             return null;
         }
-    }
+    };
 
-    function decx(vr: number, vi: number): Complex {
+  r.decimatex = function(vr, vi) {
         r0 = r1;
         i0 = i1;
         r1 = r2;
@@ -127,17 +133,17 @@ function Resampler2(): Resampler {
         } else {
             return null;
         }
-    }
+    };
 
-    function int(v: number, buf: number[]) {
+    r.interpolate = function(v, buf) {
         r0 = r1;
         r1 = r2;
         r2 = v;
         buf[0] = 0;
         buf[1] = r1 * 0.90451;
-    }
+    };
 
-    function intx(vr: number, vi: number, buf: Complex[]) {
+    r.interpolatex = function(vr, vi, buf) {
         r0 = r1;
         r1 = r2;
         r2 = vr;
@@ -149,20 +155,17 @@ function Resampler2(): Resampler {
             r: r1 * 0.90451,
             i: i1 * 0.90451
         };
-    }
-
-    return {
-        decimate: dec,
-        decimatex: decx,
-        interpolate: int,
-        interpolatex: intx
     };
+    return r;
+
 }
 
 /**
  * ### decimation : 3
  */
-function Resampler3(): Resampler {
+function resampler3() {
+
+  let r = new Resampler();
     let idx = 0;
     let r0 = 0;
     let i0 = 0;
@@ -175,7 +178,7 @@ function Resampler3(): Resampler {
     let r4 = 0;
     let i4 = 0;
 
-    function dec(v: number): number {
+    r.decimate = function(v) {
         r0 = r1;
         r1 = r2;
         r2 = r3;
@@ -187,9 +190,9 @@ function Resampler3(): Resampler {
         } else {
             return null;
         }
-    }
+    };
 
-    function decx(vr: number, vi: number): Complex {
+    r.decimatex = function(vr, vi) {
         r0 = r1;
         i0 = i1;
         r1 = r2;
@@ -209,18 +212,18 @@ function Resampler3(): Resampler {
         } else {
             return null;
         }
-    }
+    };
 
-    function int(v: number, buf: number[]) {
+    r.interpolate = function(v, buf) {
         r0 = r1;
         r1 = r2;
         r2 = v;
         buf[0] = r1 * 0.21783 + r2 * -0.06380;
         buf[1] = r1 * 0.61719;
         buf[2] = r0 * -0.06380 + r1 * 0.21783;
-    }
+    };
 
-    function intx(vr: number, vi: number, buf: Complex[]) {
+    r.interpolatex = function(vr, vi, buf) {
         r0 = r1;
         r1 = r2;
         r2 = vr;
@@ -239,19 +242,18 @@ function Resampler3(): Resampler {
             r: r0 * -0.06380 + r1 * 0.21783,
             i: i0 * -0.06380 + i1 * 0.21783
         };
-    }
-    return {
-        decimate: dec,
-        decimatex: decx,
-        interpolate: int,
-        interpolatex: intx
     };
+
+    return r;
+
 }
 
 /**
  * ### decimation : 4
  */
-function Resampler4(): Resampler {
+function resampler4() {
+
+  let r = new Resampler();
     let idx = 0;
     let r0 = 0;
     let i0 = 0;
@@ -266,7 +268,7 @@ function Resampler4(): Resampler {
     let r5 = 0;
     let i5 = 0;
 
-    function dec(v: number): number {
+    r.decimate = function(v) {
         r0 = r1;
         r1 = r2;
         r2 = r3;
@@ -279,9 +281,9 @@ function Resampler4(): Resampler {
         } else {
             return null;
         }
-    }
+    };
 
-    function decx(vr: number, vi: number): Complex {
+    r.decimatex = function(vr, vi) {
         r0 = r1;
         i0 = i1;
         r1 = r2;
@@ -304,9 +306,9 @@ function Resampler4(): Resampler {
         } else {
             return null;
         }
-    }
+    };
 
-    function int(v: number, buf: number[]) {
+    r.interpolate = function(v, buf) {
         r0 = r1;
         r1 = r2;
         r2 = v;
@@ -314,9 +316,9 @@ function Resampler4(): Resampler {
         buf[1] = r0 * 0.00480 + r1 * 0.29652 + r2 * -0.02949;
         buf[2] = r1 * 0.46578;
         buf[3] = r0 * -0.05762 + r1 * 0.25042;
-    }
+    };
 
-    function intx(vr: number, vi: number, buf: Complex[]) {
+    r.interpolatex = function(vr, vi, buf) {
         r0 = r1;
         r1 = r2;
         r2 = vr;
@@ -336,21 +338,17 @@ function Resampler4(): Resampler {
             r: r0 * -0.05762 + r1 * 0.25042,
             i: i0 * -0.05762 + i1 * 0.25042
         };
-    }
-
-    return {
-        decimate: dec,
-        decimatex: decx,
-        interpolate: int,
-        interpolatex: intx
     };
+    return r;
 
 }
 
 /**
  * ### decimation : 5
  */
-function Resampler5(): Resampler {
+function resampler5() {
+
+  let r = new Resampler();
     let idx = 0;
     let r0 = 0;
     let i0 = 0;
@@ -367,7 +365,7 @@ function Resampler5(): Resampler {
     let r6 = 0;
     let i6 = 0;
 
-    function dec(v: number): number {
+    r.decimate = function(v) {
         r0 = r1;
         r1 = r2;
         r2 = r3;
@@ -382,9 +380,9 @@ function Resampler5(): Resampler {
         } else {
             return null;
         }
-    }
+    };
 
-    function decx(vr: number, vi: number): Complex {
+    r.decimatex = function(vr, vi) {
         r0 = r1;
         i0 = i1;
         r1 = r2;
@@ -410,9 +408,9 @@ function Resampler5(): Resampler {
         } else {
             return null;
         }
-    }
+    };
 
-    function int(v: number, buf: number[]) {
+    r.interpolate = function(v, buf) {
         r0 = r1;
         r1 = r2;
         r2 = v;
@@ -421,9 +419,9 @@ function Resampler5(): Resampler {
         buf[2] = r1 * 0.37354;
         buf[3] = r0 * -0.02747 + r1 * 0.26871 + r2 * 0.00233;
         buf[4] = r0 * -0.03560 + r1 * 0.07092;
-    }
+    };
 
-    function intx(vr: number, vi: number, buf: Complex[]) {
+    r.interpolatex = function(vr, vi, buf) {
         r0 = r1;
         r1 = r2;
         r2 = vr;
@@ -450,20 +448,16 @@ function Resampler5(): Resampler {
             r: r0 * -0.03560 + r1 * 0.07092,
             i: i0 * -0.03560 + i1 * 0.07092
         };
-    }
-
-    return {
-        decimate: dec,
-        decimatex: decx,
-        interpolate: int,
-        interpolatex: intx
     };
+    return r;
 }
 
 /**
  * ### decimation : 6
  */
-function Resampler6(): Resampler {
+function resampler6() {
+  let r = new Resampler();
+
     let idx = 0;
     let r0 = 0;
     let i0 = 0;
@@ -482,7 +476,7 @@ function Resampler6(): Resampler {
     let r7 = 0;
     let i7 = 0;
 
-    function dec(v: number): number {
+    r.decimate = function(v) {
         r0 = r1;
         r1 = r2;
         r2 = r3;
@@ -498,9 +492,9 @@ function Resampler6(): Resampler {
         } else {
             return null;
         }
-    }
+    };
 
-    function decx(vr: number, vi: number): Complex {
+    r.decimatex = function(vr, vi) {
         r0 = r1;
         i0 = i1;
         r1 = r2;
@@ -528,9 +522,9 @@ function Resampler6(): Resampler {
         } else {
             return null;
         }
-    }
+    };
 
-    function int(v: number, buf: number[]) {
+    r.interpolate = function(v, buf) {
         r0 = r1;
         r1 = r2;
         r2 = v;
@@ -540,9 +534,9 @@ function Resampler6(): Resampler {
         buf[3] = r1 * 0.31182;
         buf[4] = r0 * -0.02361 + r1 * 0.24061 + r2 * 0.00125;
         buf[5] = r0 * -0.04141 + r1 * 0.10420;
-    }
+    };
 
-    function intx(vr: number, vi: number, buf: Complex[]) {
+    r.interpolatex = function(vr, vi, buf) {
         r0 = r1;
         r1 = r2;
         r2 = vr;
@@ -570,20 +564,17 @@ function Resampler6(): Resampler {
             r: r0 * -0.04141 + r1 * 0.10420,
             i: i0 * -0.04141 + i1 * 0.10420
         };
-    }
-
-    return {
-        decimate: dec,
-        decimatex: decx,
-        interpolate: int,
-        interpolatex: intx
     };
+    return r;
+
 }
 
 /**
  * ### decimation : 7
  */
-function Resampler7(): Resampler {
+function resampler7() {
+  let r = new Resampler();
+
     let idx = 0;
     let r0 = 0;
     let i0 = 0;
@@ -604,7 +595,7 @@ function Resampler7(): Resampler {
     let r8 = 0;
     let i8 = 0;
 
-    function dec(v: number): number {
+    r.decimate = function(v) {
         r0 = r1;
         r1 = r2;
         r2 = r3;
@@ -621,9 +612,9 @@ function Resampler7(): Resampler {
         } else {
             return null;
         }
-    }
+    };
 
-    function decx(vr: number, vi: number): Complex {
+    r.decimatex = function(vr, vi) {
         r0 = r1;
         i0 = i1;
         r1 = r2;
@@ -653,9 +644,9 @@ function Resampler7(): Resampler {
         } else {
             return null;
         }
-    }
+    };
 
-    function int(v: number, buf: number[]) {
+    r.interpolate = function(v, buf) {
         r0 = r1;
         r1 = r2;
         r2 = v;
@@ -666,9 +657,9 @@ function Resampler7(): Resampler {
         buf[4] = r0 * -0.01341 + r1 * 0.22721 + r2 * 0.00278;
         buf[5] = r0 * -0.02904 + r1 * 0.13135 + r2 * 0.00079;
         buf[6] = r0 * -0.02115 + r1 * 0.03420;
-    }
+    };
 
-    function intx(vr: number, vi: number, buf: Complex[]) {
+    r.interpolatex = function(vr, vi, buf) {
         r0 = r1;
         r1 = r2;
         r2 = vr;
@@ -703,21 +694,18 @@ function Resampler7(): Resampler {
             r: r0 * -0.02115 + r1 * 0.03420,
             i: i0 * -0.02115 + i1 * 0.03420
         };
-    }
-
-    return {
-        decimate: dec,
-        decimatex: decx,
-        interpolate: int,
-        interpolatex: intx
     };
+    return r;
+
 }
 
 
 /**
  * ### decimation : 11
  */
-function Resampler11(): Resampler {
+function resampler11() {
+  let r = new Resampler();
+
     let idx = 0;
     let r0 = 0;
     let i0 = 0;
@@ -746,7 +734,7 @@ function Resampler11(): Resampler {
     let r12 = 0;
     let i12 = 0;
 
-    function dec(v: number): number {
+    r.decimate = function(v) {
         r0 = r1;
         r1 = r2;
         r2 = r3;
@@ -768,9 +756,9 @@ function Resampler11(): Resampler {
         } else {
             return null;
         }
-    }
+    };
 
-    function decx(vr: number, vi: number): Complex {
+    r.decimatex = function(vr, vi) {
         r0 = r1;
         i0 = i1;
         r1 = r2;
@@ -810,9 +798,9 @@ function Resampler11(): Resampler {
         } else {
             return null;
         }
-    }
+    };
 
-    function int(v: number, buf: number[]) {
+    r.interpolate = function(v, buf) {
         r0 = r1;
         r1 = r2;
         r2 = v;
@@ -827,9 +815,9 @@ function Resampler11(): Resampler {
         buf[8] = r0 * -0.01845 + r1 * 0.09012 + r2 * 0.00080;
         buf[9] = r0 * -0.01924 + r1 * 0.04810 + r2 * 0.00014;
         buf[10] = r0 * -0.00968 + r1 * 0.01307;
-    }
+    };
 
-    function intx(vr: number, vi: number, buf: Complex[]) {
+    r.interpolatex = function(vr, vi, buf) {
         r0 = r1;
         r1 = r2;
         r2 = vr;
@@ -880,14 +868,10 @@ function Resampler11(): Resampler {
             r: r0 * -0.00968 + r1 * 0.01307,
             i: i0 * -0.00968 + i1 * 0.01307
         };
-    }
-
-    return {
-        decimate: dec,
-        decimatex: decx,
-        interpolate: int,
-        interpolatex: intx
     };
+
+    return r;
+
 }
 
 
@@ -900,10 +884,13 @@ function Resampler11(): Resampler {
 /**
  * Exported factory for resamplers
  */
-export class Resampler {
+export class ResamplerFactory {
 
-
-    static create(decimation: number): Resampler {
+    /**
+     * @param decimation {number}
+     * @return {Resampler}
+     */
+    static create(decimation) {
 
         function BadDecimationSpecException(message) {
             this.message = message;
@@ -913,21 +900,21 @@ export class Resampler {
 
         switch (decimation) {
             case 1:
-                return Resampler1();
+                return resampler1();
             case 2:
-                return Resampler2();
+                return resampler2();
             case 3:
-                return Resampler3();
+                return resampler3();
             case 4:
-                return Resampler4();
+                return resampler4();
             case 5:
-                return Resampler5();
+                return resampler5();
             case 6:
-                return Resampler6();
+                return resampler6();
             case 7:
-                return Resampler7();
+                return resampler7();
             case 11:
-                return Resampler11();
+                return resampler11();
             default:
                 throw new BadDecimationSpecException('Decimation ' +
                     decimation + ' not supported');

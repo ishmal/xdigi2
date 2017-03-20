@@ -1,7 +1,6 @@
-declare var require: any
 
-import Vue = require('vue')
-var App = require('./app.vue').default
+const Vue = require('vue');
+const App = require('./app.vue').default;
 
 document.addEventListener("DOMContentLoaded", function() {
 

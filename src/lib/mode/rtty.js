@@ -132,7 +132,7 @@ class RttyMode extends FskBase {
         this._shifted = false;
     }
 
-    getProperties(): Properties {
+    getProperties() {
         let that = this;
         return {
             name: 'rtty',

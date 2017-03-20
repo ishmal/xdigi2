@@ -118,8 +118,8 @@ export class Tuner extends TunerBase {
      */
     constructor(par, canvas) {
 
-        window.requestAnimationFrame = window.requestAnimationFrame
-            || window.msRequestAnimationFrame;
+        window.requestAnimationFrame = window.requestAnimationFrame ||
+          window.msRequestAnimationFrame;
         //  || window.mozRequestAnimationFrame
         //  || window.webkitRequestAnimationFrame;
 
@@ -149,13 +149,19 @@ export class Tuner extends TunerBase {
         this.setupEvents(canvas);
     }
 
-    // note that this is different from the public method
-    set frequency(freq: number) {
+    /**
+     * note that this is different from the public method
+     * @param frequency {number}
+     */
+    set frequency(freq) {
         this._frequency = freq;
         this._par.frequency = freq;
     }
 
-    get frequency(): number {
+    /**
+     * @return {number}
+     */
+    get frequency() {
         return this._frequency;
     }
 
@@ -239,7 +245,7 @@ export class Tuner extends TunerBase {
             let pos = getMousePos(canvas, event);
             let freq0 = self.frequency;
             let d = new Draggable(pos);
-            d.drag = (p: Point) => {
+            d.drag = (p) => {
                 let dx = p.x - d.pos0.x;
                 dx *= self._tuningRate; //cool!
                 let freqDiff = self._MAX_FREQ * dx / self._width;
@@ -336,7 +342,7 @@ export class Tuner extends TunerBase {
             r1: 0.0,
             g1: 255,
             b1: 255
-        }
+        };
         let range2 = {
             start: size/2 + 1,
             end: size-1,
@@ -346,7 +352,7 @@ export class Tuner extends TunerBase {
             r1: 255,
             g1: 0,
             b1: 255
-        }
+        };
         let ranges = [ range1, range2 ];
 
         for (let i=0 ; i < size ; i++) {
@@ -354,7 +360,7 @@ export class Tuner extends TunerBase {
         }
         ranges.forEach( r => {
             let d = 1.0 / (r.end - r.start + 1);
-            let tween = 0
+            let tween = 0;
             let rr = r.r1 - r.r0;
             let gr = r.g1 - r.g0;
             let br = r.b1 - r.b0;

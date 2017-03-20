@@ -19,14 +19,11 @@
 
  'use strict';
 
-/* global window, navigator*/
+/* global window, navigator, AudioContext */
 /* jslint node: true */
 
 import {Digi} from './digi';
 import {Constants} from './constants';
-
-
-
 
 //######################################################################
 // A U D I O    I N P U T
@@ -71,7 +68,7 @@ export class AudioInput {
      * @return boolean
      */
     open() {
-        return true
+        return true;
     }
 
     /**
@@ -124,35 +121,42 @@ export class AudioOutput {
         this.enabled = true;
     }
 
-    transmit(): number[] {
+    /**
+     * @return {number[]}
+     */
+    transmit() {
         return this.par.transmit();
     }
 
     /**
      * Called to connect with the device and start processing.
+     * @return {boolean}
      */
-    open(): boolean {
-        return true
+    open() {
+        return true;
     }
 
     /**
      * Called to disconnect from input device and cease operations
+     * @return {boolean}
      */
-    close(): boolean {
+    close() {
         return true;
     }
 
     /**
      * Called to resume output processing
+     * @return {boolean}
      */
-    start(): boolean {
+    start() {
         return true;
     }
 
     /**
      * Called to pause output processing
+     * @return {boolean}
      */
-    stop(): boolean {
+    stop() {
         return true;
     }
 
@@ -196,7 +200,7 @@ export class WebAudioInput extends AudioInput {
         this.inputNode = null;
         this.isRunning = false;
         this.analyser = { // dummy until audio started
-            getByteFrequencyData: function(d: Uint8Array) {
+            getByteFrequencyData: function(d) {
             }
         };
     }
@@ -231,7 +235,7 @@ export class WebAudioInput extends AudioInput {
                 outBuf[outPtr++] = input[i];
                 outCtr = 0;
                 if (outPtr >= outBufSize) {
-                  this.receive(outBuf)
+                  this.receive(outBuf);
                   outBuf = [];
                   outPtr = 0;
                 }
@@ -247,7 +251,10 @@ export class WebAudioInput extends AudioInput {
       this.isRunning = true;
     }
 
-    startStream(newstream: MediaStream) {
+    /**
+     * @param newstream {MediaStream}
+     */
+    startStream(newstream) {
         this.stream = newstream;
         this.source = this.actx.createMediaStreamSource(newstream);
         this.setupSource();
@@ -313,10 +320,15 @@ export class WebAudioInput extends AudioInput {
 
 export class CordovaAudioInput extends AudioInput {
 
+    /**
     audioInput: any;
 		isRunning: boolean;
+    */
 
-    constructor(par: Digi) {
+    /**
+     * @param par instance of parent Digi
+     */
+    constructor(par) {
         super(par);
         this.par = par;
         this.sampleRate = 8000;
@@ -331,7 +343,7 @@ export class CordovaAudioInput extends AudioInput {
         }, false);
     }
 
-    open(): boolean {
+    open() {
         //try cordova plugin first
         let audioInput = window.audioinput;
         if (!audioInput) {
@@ -352,13 +364,13 @@ export class CordovaAudioInput extends AudioInput {
         }
     }
 
-    close(): boolean {
+    close() {
         this.isRunning = false;
         this.audioInput.stop();
         return true;
     }
 
-		start(): boolean {
+		start() {
 			this.isRunning = true;
 			return true;
 		}
@@ -383,12 +395,17 @@ export class CordovaAudioInput extends AudioInput {
  */
 export class WebAudioOutput extends AudioOutput {
 
+    /**
     actx: AudioContext;
     isRunning: boolean;
     source: any;
     lpf: any;
+    */
 
-    constructor(par: Digi) {
+    /**
+     * @param par instance of parent Digi
+     */
+    constructor(par) {
         super(par);
         this.actx = new AudioContext();
         this.sampleRate = this.actx.sampleRate;
@@ -396,7 +413,7 @@ export class WebAudioOutput extends AudioOutput {
         this.enabled = false;
     }
 
-    open(): boolean {
+    open() {
 
         let that = this;
         let bufferSize = 4096;
@@ -439,7 +456,7 @@ export class WebAudioOutput extends AudioOutput {
     }
 
 
-    close(): boolean {
+    close() {
         this.isRunning = false;
         if (this.source) {
           this.source.disconnect();
@@ -448,28 +465,37 @@ export class WebAudioOutput extends AudioOutput {
     }
 
 
-		start(): boolean {
+		start() {
 			this.isRunning = true;
 			return true;
 		}
 
-		stop(): boolean {
+		stop() {
 			this.isRunning = false;
 			return true;
 		}
 
-
 }
 
 
-
+/**
+ * Factory for creating Audio apis
+ */
 export class AudioFactory {
 
-    static getInput(par: Digi): AudioInput {
+    /**
+     * @param par instance of parent Digi
+     * @return {AudioInput}
+     */
+    static getInput(par) {
             return new WebAudioInput(par);
     }
 
-    static getOutput(par: Digi): AudioOutput {
+    /**
+     * @param par instance of parent Digi
+     * @return {AudioOutput}
+     */
+    static getOutput(par) {
             return new WebAudioOutput(par);
     }
 

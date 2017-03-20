@@ -169,13 +169,14 @@ const encodeTable = descriptions.map(s => {
     return bools;
 });
 
-
+/**
 interface DecodeTable {
     [K: number]: number;
 }
+*/
 
-function createDecodeTable(): DecodeTable {
-    let dec: DecodeTable = {};
+function createDecodeTable() {
+    let dec = {};
     for (let i = 0; i < descriptions.length; i++) {
         let key = parseInt(descriptions[i], 2);
         dec[key] = i;
@@ -183,7 +184,7 @@ function createDecodeTable(): DecodeTable {
     return dec;
 }
 
-const decodeTable: DecodeTable = createDecodeTable();
+const decodeTable = createDecodeTable();
 
 function printTables() {
 
@@ -199,19 +200,24 @@ function printTables() {
     });
 }
 
-
+/**
 export interface Timer {
     update(r: number, i: number, f: (r: number, i: number) => void);
 }
+*/
 
-function createEarlyLate(samplesPerSymbol): Timer {
+/**
+ * @param samplesPerSymbol {number}
+ * @return {Timer}
+ */
+function createEarlyLate(samplesPerSymbol) {
     let size = Math.round(samplesPerSymbol);
     let half = Math.floor(samplesPerSymbol * 0.5);
     let buf = new Float32Array(size);
     let bitclk = 0.0;
 
 
-    function update(r: number, i: number, f: (a: number, b: number) => void) {
+    function update(r, i, f) {
         let idx = Math.round(bitclk);
         let sum = 0.0;
         let ampsum = 0.0;
@@ -247,7 +253,6 @@ const TWOPI = Math.PI * 2.0;
 const HALFPI = Math.PI * 0.5;
 
 
-
 const LOG = Math.log;
 
 /**
@@ -255,6 +260,7 @@ const LOG = Math.log;
  */
 export class MfskMode extends Mode {
 
+    /**
     _ilp: Filter;
     _qlp: Filter;
     _symbollen: number;
@@ -274,7 +280,7 @@ export class MfskMode extends Mode {
     _txPhase: number[][];
     _txQueue: number[][];
     _timer: Timer = null;
-
+    */
 
     constructor(par) {
         super(par);
@@ -308,7 +314,7 @@ export class MfskMode extends Mode {
 
     }
 
-    getProperties(): Properties {
+    getProperties() {
         let that = this;
         let cfg = {
             name: 'psk',
@@ -318,10 +324,10 @@ export class MfskMode extends Mode {
                 {
                     name: 'rate',
                     type: 'choice',
-                    get value(): number {
+                    get value() {
                         return that.rate;
                     },
-                    set value(v: number) {
+                    set value(v) {
                         that.rate = v;
                     },
                     options: {
@@ -333,10 +339,10 @@ export class MfskMode extends Mode {
                 {
                     name: 'qpsk',
                     type: 'boolean',
-                    get value(): boolean {
+                    get value() {
                         return that._qpskMode;
                     },
-                    set value(v: boolean) {
+                    set value(v) {
                         that._qpskMode = v;
                     }
                 }
@@ -350,7 +356,7 @@ export class MfskMode extends Mode {
     }
 
 
-    _setRate(v: number) {
+    _setRate(v) {
         super._setRate(v);
         this._ilp = Biquad.lowPass(v * 0.707, this.par.sampleRate);
         this._qlp = Biquad.lowPass(v * 0.707, this.par.sampleRate);
@@ -508,12 +514,12 @@ export class MfskMode extends Mode {
         this._txPhase = txPhase;
     }
 
-    txStart(): Promise<boolean> {
-        return Promise.resolve(true);
+    txStart() {
+        return true;
     }
 
-    txStop(): Promise<boolean> {
-        return Promise.resolve(true);
+    txStop() {
+        return true;
     }
 
     getTransmitText() {
@@ -532,7 +538,7 @@ export class MfskMode extends Mode {
     }
 
 
-    getTransmitData(): number[] {
+    getTransmitData() {
         let q = this._txQueue;
         this.getTransmitText();
         if (q.length) {

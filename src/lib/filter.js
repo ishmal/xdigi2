@@ -20,17 +20,19 @@
 import {Window} from './window';
 import {Complex} from './complex';
 
-
+/**
 export interface Filter {
     update(v: number): number;
     updatex(v: Complex): Complex;
 }
-
+*/
 
 /**
  * Hardcoded filter for size 13.  Pick 13!
+ * @param coeffs: {number[]}
+ * @return {Filter}
  */
-function newFilter13(coeffs: number[]): Filter {
+function newFilter13(coeffs) {
 
     let c0 = coeffs[0], c1 = coeffs[1], c2 = coeffs[2], c3 = coeffs[3],
         c4 = coeffs[4], c5 = coeffs[5], c6 = coeffs[6], c7 = coeffs[7],
@@ -43,7 +45,7 @@ function newFilter13(coeffs: number[]): Filter {
         i7 = 0, i8 = 0, i9 = 0, i10 = 0, i11 = 0, i12 = 0;
 
     return {
-        update: function(v: number): number {
+        update: function(v) {
             r12 = r11;
             r11 = r10;
             r10 = r9;
@@ -62,7 +64,7 @@ function newFilter13(coeffs: number[]): Filter {
                 c7 * r5 + c8 * r4 + c9 * r3 + c10 * r2 + c11 * r1 + c12 * r0;
         },
 
-        updatex: function(v: Complex): Complex {
+        updatex: function(v) {
             r12 = r11;
             r11 = r10;
             r10 = r9;
@@ -100,8 +102,10 @@ function newFilter13(coeffs: number[]): Filter {
     };
 }
 
-
-function genCoeffs(size, window, func): number[] {
+/**
+ * @return {number[]}
+ */
+function genCoeffs(size, window, func) {
     window = window || Window.hann;
     let W = window(size);
     let center = size * 0.5;
@@ -157,7 +161,12 @@ function newFilter(size, coeffs) {
 
 export class FIR {
 
-    static average(size: number, window?: Window): Filter {
+    /**
+     * @param size {number}
+     * @param window {Window}
+     * @return {Filter}
+     */
+    static average(size, window) {
         let omega = 1.0 / size;
         let coeffs = genCoeffs(size, window, function(i) {
             return omega;
@@ -165,14 +174,26 @@ export class FIR {
         return (size === 13) ? newFilter13(coeffs) : newFilter(size, coeffs);
     }
 
-    static boxcar(size: number, window?: Window): Filter {
+    /**
+     * @param size {number}
+     * @param window {Window}
+     * @return {Filter}
+     */
+    static boxcar(size, window) {
         let coeffs = genCoeffs(size, window, function(i) {
             return 1.0;
         });
         return (size === 13) ? newFilter13(coeffs) : newFilter(size, coeffs);
     }
 
-    static lowpass(size: number, cutoffFreq: number, sampleRate: number, window?: Window) {
+    /**
+     * @param size {number}
+     * @param cutoffFreq {number}
+     * @param sampleRate {number}
+     * @param window {Window}
+     * @return {Filter}
+     */
+    static lowpass(size, cutoffFreq, sampleRate, window) {
         let omega = 2.0 * Math.PI * cutoffFreq / sampleRate;
         let coeffs = genCoeffs(size, window, function(i) {
             return (i === 0) ? omega / Math.PI : Math.sin(omega * i) / (Math.PI * i);
@@ -180,7 +201,14 @@ export class FIR {
         return (size === 13) ? newFilter13(coeffs) : newFilter(size, coeffs);
     }
 
-    static highpass(size: number, cutoffFreq: number, sampleRate: number, window?: Window) {
+    /**
+     * @param size {number}
+     * @param cutoffFreq {number}
+     * @param sampleRate {number}
+     * @param window {Window}
+     * @return {Filter}
+     */
+    static highpass(size, cutoffFreq, sampleRate, window) {
         let omega = 2.0 * Math.PI * cutoffFreq / sampleRate;
         let coeffs = genCoeffs(size, window, function(i) {
             return (i === 0) ? 1.0 - omega / Math.PI : -Math.sin(omega * i) / (Math.PI * i);
@@ -188,7 +216,15 @@ export class FIR {
         return (size === 13) ? newFilter13(coeffs) : newFilter(size, coeffs);
     }
 
-    static bandpass(size: number, loCutoffFreq: number, hiCutoffFreq: number, sampleRate: number, window?: Window) {
+    /**
+     * @param size {number}
+     * @param loCutoffFreq {number}
+     * @param hiCutoffFreq {number}
+     * @param sampleRate {number}
+     * @param window {Window}
+     * @return {Filter}
+     */
+    static bandpass(size, loCutoffFreq, hiCutoffFreq, sampleRate, window) {
         let omega1 = 2.0 * Math.PI * hiCutoffFreq / sampleRate;
         let omega2 = 2.0 * Math.PI * loCutoffFreq / sampleRate;
         let coeffs = genCoeffs(size, window, function(i) {
@@ -198,7 +234,15 @@ export class FIR {
         return (size === 13) ? newFilter13(coeffs) : newFilter(size, coeffs);
     }
 
-    static bandreject(size: number, loCutoffFreq: number, hiCutoffFreq: number, sampleRate: number, window?: Window) {
+    /**
+     * @param size {number}
+     * @param loCutoffFreq {number}
+     * @param hiCutoffFreq {number}
+     * @param sampleRate {number}
+     * @param window {Window}
+     * @return {Filter}
+     */
+    static bandreject(size, loCutoffFreq, hiCutoffFreq, sampleRate, window) {
         let omega1 = 2.0 * Math.PI * hiCutoffFreq / sampleRate;
         let omega2 = 2.0 * Math.PI * loCutoffFreq / sampleRate;
         let coeffs = genCoeffs(size, window, function(i) {
@@ -208,7 +252,15 @@ export class FIR {
         return (size === 13) ? newFilter13(coeffs) : newFilter(size, coeffs);
     }
 
-    static raisedcosine(size: number, rolloff: number, symbolFreq: number, sampleRate: number, window?: Window) {
+    /**
+     * @param size {number}
+     * @param roloff {number}
+     * @param symbolFreq {number}
+     * @param sampleRate {number}
+     * @param window {Window}
+     * @return {Filter}
+     */
+    static raisedcosine(size, rolloff, symbolFreq, sampleRate, window) {
         let T = sampleRate / symbolFreq;
         let a = rolloff;
 
@@ -229,7 +281,7 @@ export class FIR {
         return (size === 13) ? newFilter13(coeffs) : newFilter(size, coeffs);
     }
 
-};
+}
 
 
 
@@ -242,9 +294,14 @@ export class FIR {
 /**
  * A biquad filter
  * @see http:// en.wikipedia.org/wiki/Digital_biquad_filter
+ * @param b0 {number}
+ * @param b1 {number}
+ * @param b2 {number}
+ * @param a1 {number}
+ * @param a2 {number}
+ * @return {Filter}
  */
-function BiquadFilter(b0: number, b1: number,
-    b2: number, a1: number, a2: number): Filter {
+function BiquadFilter(b0, b1, b2, a1, a2) {
 
     let x1 = 0, x2 = 0, y1 = 0, y2 = 0;
     let x1r = 0, x2r = 0, y1r = 0, y2r = 0;
@@ -252,7 +309,7 @@ function BiquadFilter(b0: number, b1: number,
 
     return {
 
-        update: function(x: number): number {
+        update: function(x) {
             let y = b0 * x + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2;
             x2 = x1;
             x1 = x;
@@ -261,7 +318,7 @@ function BiquadFilter(b0: number, b1: number,
             return y;
         },
 
-        updatex: function(x: Complex): Complex {
+        updatex: function(x) {
             let r = x.r;
             let i = x.i;
             let yr = b0 * r + b1 * x1r + b2 * x2r - a1 * y1r - a2 * y2r;
@@ -282,7 +339,13 @@ function BiquadFilter(b0: number, b1: number,
 
 export class Biquad {
 
-    static lowPass(frequency: number, sampleRate: number, q?: number): Filter {
+    /**
+     * @param frequency {number}
+     * @param sampleRate {number}
+     * @param q {number}
+     * @return {Filter}
+     */
+    static lowPass(frequency, sampleRate, q) {
         q = typeof q !== 'undefined' ? q : 0.707;
         let freq = 2.0 * Math.PI * frequency / sampleRate;
         let alpha = Math.sin(freq) / (2.0 * q);
@@ -295,7 +358,13 @@ export class Biquad {
         return BiquadFilter(b0 / a0, b1 / a0, b2 / a0, a1 / a0, a2 / a0);
     }
 
-    static highPass(frequency: number, sampleRate: number, q?: number): Filter {
+    /**
+     * @param frequency {number}
+     * @param sampleRate {number}
+     * @param q {number}
+     * @return {Filter}
+     */
+    static highPass(frequency, sampleRate, q) {
         q = typeof q !== 'undefined' ? q : 0.707;
         let freq = 2.0 * Math.PI * frequency / sampleRate;
         let alpha = Math.sin(freq) / (2.0 * q);
@@ -308,7 +377,13 @@ export class Biquad {
         return BiquadFilter(b0 / a0, b1 / a0, b2 / a0, a1 / a0, a2 / a0);
     }
 
-    static bandPass(frequency: number, sampleRate: number, q?: number): Filter {
+    /**
+     * @param frequency {number}
+     * @param sampleRate {number}
+     * @param q {number}
+     * @return {Filter}
+     */
+    static bandPass(frequency, sampleRate, q) {
         q = typeof q !== 'undefined' ? q : 0.5;
         let freq = 2.0 * Math.PI * frequency / sampleRate;
         let alpha = Math.sin(freq) / (2.0 * q);
@@ -321,7 +396,13 @@ export class Biquad {
         return BiquadFilter(b0 / a0, b1 / a0, b2 / a0, a1 / a0, a2 / a0);
     }
 
-    static bandReject(frequency: number, sampleRate: number, q?: number): Filter {
+    /**
+     * @param frequency {number}
+     * @param sampleRate {number}
+     * @param q {number}
+     * @return {Filter}
+     */
+    static bandReject(frequency, sampleRate, q) {
         q = typeof q !== 'undefined' ? q : 0.5;
         let freq = 2.0 * Math.PI * frequency / sampleRate;
         let alpha = Math.sin(freq) / (2.0 * q);

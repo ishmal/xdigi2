@@ -30,6 +30,7 @@ const SSIZE = 200;
  */
 export class FskBase extends Mode {
 
+    /**
     _shift: number;
     _inverted: boolean;
     _samplesSinceChange: number;
@@ -43,17 +44,20 @@ export class FskBase extends Mode {
     _scopeData: number[][];
     _scnt: number;
     _sx: number;
-
     _sf: Filter;
     _mf: Filter;
     _dataFilter: Filter;
     _symbollen: number;
     _halfsym: number;
+    */
 
-    constructor(par: Digi) {
+    /**
+     * @param par instance of parent Digi
+     */
+    constructor(par) {
         super(par);
         this._shift = 170.0;
-        this._inverted = false;
+        this.inverted = false;
         this.rate = 45.0;
         this._samplesSinceChange = 0;
         this._lastBit = false;
@@ -66,9 +70,8 @@ export class FskBase extends Mode {
         this._lasti = 0;
         this._bitsum = 0;
 
-
         // scope
-        this._scopeData = new Array<number[]>(SSIZE);
+        this._scopeData = new Array(SSIZE);
         this._scnt = 0;
         this._sx = -1;
     }
@@ -88,18 +91,11 @@ export class FskBase extends Mode {
 
     /**
      * @see Mode._setRate for an explanation of this
+     * @param v {number}
      */
-    _setRate(v: number) {
+    _setRate(v) {
         super._setRate(v);
         this.adjust();
-    }
-
-    get inverted(): boolean {
-        return this._inverted;
-    }
-
-    set inverted(v: boolean) {
-        this._inverted = v;
     }
 
     adjust() {
@@ -154,7 +150,11 @@ export class FskBase extends Mode {
     }
 
 
-    processBit(bit: boolean, parms?: any) {
+    /**
+     * @param bit {boolean}
+     * @param parms {any} optional
+     */
+    processBit(bit, parms) {
     }
 
 

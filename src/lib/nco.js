@@ -16,7 +16,6 @@
  *    You should have received a copy of the GNU General Public License
  *    along with this program.  If not, see <http:// www.gnu.org/licenses/>.
  */
-'use strict';
 
 /**
  * NOTE:  Complex is { r: number, i: number }
@@ -87,8 +86,11 @@ const TWO32 = 4294967296.0;
 /**
  * A sine generator with a 31-bit accumulator and a 16-bit
  * lookup table.  Much faster than Math.whatever
+ * @param frequency {number}
+ * @param sampleRate {number}
+ * @return {Nco}
  */
-export function NcoCreate(frequency, sampleRate): Nco {
+export function NcoCreate(frequency, sampleRate) {
 
     let hzToInt = TWO32 / sampleRate;
     let freq = 0 | 0;
@@ -148,8 +150,11 @@ export function NcoCreate(frequency, sampleRate): Nco {
 
 /**
  * A simpler Nco for transmitting, etc
+ * @param frequency {number}
+ * @param sampleRate {number}
+ * @return {Nco}
  */
-export function NcoCreateSimple(frequency, sampleRate): Nco {
+export function NcoCreateSimple(frequency, sampleRate) {
 
     let hzToInt = TWO32 / sampleRate;
     let freq = 0 | 0;

@@ -44,7 +44,10 @@ export interface Properties {
 export class Afc {
     adjust() {
     }
-    compute(ps: number[]) {
+    /**
+     * @param ps {number[]}
+     */
+    compute(ps) {
     }
 }
 
@@ -85,7 +88,7 @@ export class Mode {
         this._rate = 31.25;
         this._nco = NcoCreateSimple(this._frequency, par.sampleRate);
         this._txNco = NcoCreateSimple(this._frequency, par.sampleRate);
-        this._cwBuffer = new Array(1024)
+        this._cwBuffer = new Array(1024);
         this._cwBuffer.fill(1.0);
     }
 
@@ -139,7 +142,7 @@ export class Mode {
             loBin = freqBin - 15;
             hiBin = freqBin + 15;
         };
-        a.compute = (ps: number[]) => {
+        a.compute = (ps) => {
             let sum = 0;
             let sumScale = 0;
             for (let i = loBin, j = freqBin + 1; i < freqBin; i++, j++) {

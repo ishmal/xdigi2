@@ -299,7 +299,7 @@ export class Ldpc {
 
     arrayNew(size) {
       let a = new Array(size);
-      a.fill(0)
+      a.fill(0);
       return a;
     }
 
@@ -317,7 +317,12 @@ export class Ldpc {
       return p;
     }
 
-    encode(str: string, lenStr: string, rateStr: string) {
+    /**
+     * @param str {string}
+     * @param lenStr {string}
+     * @param rateStr {string}
+     */
+    encode(str, lenStr, rateStr) {
         let code = codes[lenStr];
         let rate = code.rates[rateStr];
         let z = code.z;
