@@ -1,7 +1,7 @@
 <template>
   <div class='tuner'>
     <canvas class='tuner-canvas' width='1024' height='150'></canvas>
-    <div class='row tuner-buttons'>
+    <div class='tuner-buttons'>
       <a class='col-xs-2 fa fa-2x' :class='useAfcClass' href='#' v-on:click='toggleUseAfc()'></a>
       <span class='col-xs-2'>{{ digi.frequency.toFixed(1) }}</span>
       <a class='col-xs-2' href='#' v-on:click='setTuningRate(1.0)'>1:1</a>
@@ -14,9 +14,10 @@
 
 <script>
 
-import {Tuner} from './lib/tuner';
+import {Tuner} from '../lib/tuner';
 
 export default {
+  name: 'tuner',
   props: ['digi'],
   mounted: function() {
     let elem = this.$el.children[0];

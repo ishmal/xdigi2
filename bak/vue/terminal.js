@@ -1,10 +1,6 @@
-<template>
-  <textarea class='terminal' rows='4'></textarea>
-</template>
 
-<script>
-
-import {Digi, Terminal} from './lib/digi';
+import {Digi, Terminal} from '../lib/digi';
+import Vue from 'vue';
 
 /**
  * @param digi instance of parent {Digi}
@@ -28,21 +24,13 @@ function setupTerminal(digi, txt) {
   digi.terminal = textWidget;
 }
 
-
-
-export default {
+Vue.component('terminal', {
+  template: `
+    <textarea class='terminal' rows='4'></textarea>
+  `,
   props: ['digi'],
   mounted: function() {
     let elem = this.$el;
     setupTerminal(this.digi, elem);
   }
-}
-
-</script>
-
-<style>
-.terminal {
-  background: #aaffaa;
-  height: 55%;
-}
-</style>
+});

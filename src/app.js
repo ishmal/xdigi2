@@ -1,13 +1,13 @@
 
-const Vue = require('vue');
-const App = require('./app.vue').default;
+import Vue from 'vue';
+
+import MainApp from './vue/main.vue';
 
 document.addEventListener("DOMContentLoaded", function() {
 
   new Vue({
     el: '#app',
-    components: { App },
-    render: h => h('app')
+    render: h => h(MainApp)
   });
 
 });

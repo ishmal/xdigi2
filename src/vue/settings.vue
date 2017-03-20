@@ -25,9 +25,10 @@
 
 <script>
 
-import {OutText} from './lib/digi';
+import {OutText} from '../lib/digi';
 
 export default {
+  name: 'settings',
   props: ['digi'],
   mounted: function() {
     let elem = this.$el;

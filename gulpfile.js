@@ -10,6 +10,7 @@ const jshint = require('gulp-jshint');
 gulp.task('copy', function() {
 	gulp.src([
 		'./src/index.html',
+		'./src/app.css',
 		'./node_modules/bootstrap/dist/css/bootstrap.min.css',
 	]).pipe(gulp.dest('./www/'));
 	gulp.src([

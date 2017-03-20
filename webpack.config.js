@@ -6,36 +6,32 @@ module.exports = {
 		vendor: ['vue', 'tether', 'bootstrap', 'jquery']
 	},
 	output: {
-		filename: 'app.bundle.js',
+		filename: '[name].bundle.js',
 		path: __dirname + '/www'
 	},
 	resolve: {
 		// Add `.ts` and `.tsx` as a resolvable extension.
-		extensions: ['', '.webpack.js', '.web.js', '.js', '.vue'],
+		extensions: ['.webpack.js', '.web.js', '.js', '.vue'],
 	},
 	module: {
 		loaders: [{
 				test: /\.vue$/,
-				loader: 'vue'
+				loader: 'vue-loader',
+				exclude: /node_modules/
 			},
 			{
 				test: /.js$/,
 				loader: 'babel-loader',
-				query: {
-					presets: ['es2015']
+				exclude: /node_modules/,
+				options: {
+					presets: ['es2015', 'stage-2']
 				}
 			}
 		]
 	},
-	vue: {
-		loaders: {
-			js: 'babel?presets[]=es2015'
-		}
-	},
 	devtool: "source-map",
 	plugins: [
-		new webpack.optimize.CommonsChunkPlugin( /* chunkName= */ "vendor", /* filename= */
-			"vendor.bundle.js"),
+		new webpack.optimize.CommonsChunkPlugin("vendor"),
 		new webpack.ProvidePlugin({
 			$: "jquery",
 			jQuery: "jquery",

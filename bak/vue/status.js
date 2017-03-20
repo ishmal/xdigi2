@@ -1,10 +1,7 @@
-<template>
-  <textarea readonly class='status' rows='3'></textarea>
-</template>
 
-<script>
+import {Digi, OutText} from '../lib/digi';
+import Vue from 'vue';
 
-import {Digi, OutText} from './lib/digi';
 
 /**
  * @param digi instance of parent {Digi}
@@ -24,21 +21,13 @@ function setupStatus(digi, txt) {
   digi.statText = textWidget;
 }
 
-export default {
+Vue.component('status', {
+  template: `
+    <textarea readonly class='status' rows='3'></textarea>
+  `,
   props: ['digi'],
   mounted: function() {
     let elem = this.$el;
     setupStatus(this.digi, elem);
   }
-}
-
-</script>
-
-<style>
-
-.status {
-  background: #aaaaaa;
-  height: 10%;
-}
-
-</style>
+});

@@ -22,6 +22,7 @@
 
 
 export default {
+  name: 'prefs',
   props: ['digi', 'config'],
   methods: {
     save: function() {

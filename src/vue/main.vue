@@ -2,7 +2,7 @@
 
 <div class='app'>
 
-  <div class="appnav row">
+  <div class="appnav">
 
     <a class="home col-xs-2"
      v-on:click='page="home"' href="#">Xdigi</a>
@@ -45,14 +45,13 @@
 
 <script>
 
-import {Digi} from './lib/digi';
-import {AudioFactory} from './lib/audio';
-const tuner = require('./tuner.vue').default;
-const status = require('./status.vue').default;
-const outtext = require('./outtext.vue').default;
-const terminal = require('./terminal.vue').default;
-const settings = require('./settings.vue').default;
-const prefs = require('./prefs.vue').default;
+import {Digi} from '../lib/digi';
+import {AudioFactory} from '../lib/audio';
+import prefs from './prefs.vue';
+import settings from './settings.vue';
+import status from './status.vue';
+import terminal from './terminal.vue';
+import tuner from './tuner.vue';
 
 let digi = new Digi();
 
@@ -88,13 +87,13 @@ function alert(msg) {
 
 
 export default {
+  name: 'main',
   components: {
-    tuner,
-    status,
-    outtext,
-    terminal,
+    prefs,
     settings,
-    prefs
+    status,
+    terminal,
+    tuner
   },
 
   data() {
@@ -144,8 +143,8 @@ export default {
     }
   }
 
-
 }
+
 
 </script>
 
@@ -154,6 +153,7 @@ export default {
   .app {
     height: 100%;
     width: 100%;
+    padding: 25px;
   }
 
   .appnav {
